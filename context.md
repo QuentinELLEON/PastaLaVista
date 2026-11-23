@@ -9,7 +9,7 @@ Sources: `subject_definition/SujetAdaptation2627VF.pdf` (assignment) and `subjec
 - **Course:** SI5, semester S10, "Adaptation" (adaptive user interfaces / plasticity), academic year 2026-2027.
 - **Instructors:** Christian Brel and Anne-Marie Pinna (they must be invited to the Git repository). Communication on Slack `#si5-adaptation`, plus a private group channel `#si5-adaptation-<GROUP NAME>`.
 - **Team:** group of at most 4 students. **Every member is graded individually**, so everybody must contribute visibly.
-- **Subject:** adapt the **ordering journey of a fast-food restaurant** (menu → order → payment) on a **self-service kiosk**, using **runtime adaptation** to the usage context.
+- **Subject:** adapt the **ordering journey of a fast-food restaurant** (menu → order → payment) using **runtime adaptation** to the usage context. The restaurant sells pasta.
 - **Language of the product:** the restaurant is a French-language context; UI text language is not formally decided (see open questions).
 
 ## 2. Business goals
@@ -31,8 +31,8 @@ Reacting to promotional offers is part of the journey.
 - **Adaptations on the "Users" axis** (mandatory).
 - **Adaptations on exactly one more axis**, chosen by the group.
 
-### Decision already taken: the "Devices" axis is NOT done
-The team will **not** work on the Devices axis (smartphone + kiosk hybrid, handover between devices, chatbot ordering). Do not design, mock up or code any of it. The second axis is therefore the **Environment** axis.
+### Decision taken: second axis = Devices (NOT Environment)
+The team works on the **Users** axis and the **Devices** axis. The **Environment** axis (weather, rush) is **out of scope**: do not design, mock up or code it.
 
 ### Axis 1 — Users (mandatory)
 Personalise the journey for the user profile from the first seconds. To answer:
@@ -43,26 +43,28 @@ Personalise the journey for the user profile from the first seconds. To answer:
 5. Identify how to **recognise a profile dynamically**.
 6. Identify how to **switch from the standard UI to a personalised UI**.
 
-Persona ideas (not decided; examples only): hurried regular customer / expert, first-time or hesitant customer, family with children, elderly person, person with reduced mobility or visual impairment, tourist/non-native speaker, big-basket group order.
+Chosen user groups and personas (see `docs/tableau-comparatif-parcours.md`, written in French):
+- **Group:** young adults and working people → **Jérémy Martin** — regular customer, Skema student, finishes at noon on Wednesdays, comes weekly, comfortable with technology, must eat fast to get back to work, **has a customer account**.
+- **Group:** tourists unfamiliar with pasta who cannot cook for themselves → **Alexovitch Dimitri Alexei** — Russian bodybuilder, wants large quantities of slow carbs and protein, healthy food adapted to his needs, no time constraint, **does not speak French**, not comfortable with technology, slow, no account.
 
-### Axis 2 — Environment (the group's chosen second axis)
-The subject offers two sub-topics; the scenario to study is chosen inside each:
-- **Weather:** pick one scenario — *heatwave / bright sun* **or** *heavy rain / freezing cold*. Weather changes what people want to eat and how they consume (eat in / take away / drinks / hot vs cold products).
-- **Rush (crowd peak):** pick one scenario — *calm restaurant mode* **or** *rush mode*. Goal: keep queues fluid and customers satisfied.
+### Axis 2 — Devices (the group's chosen second axis)
+Some fast foods offer a **hybrid smartphone + kiosk** solution: the customer uses their smartphone to configure the order on the move or before coming, then uses the physical kiosk to finalise the purchase and trigger kitchen preparation. To answer:
+1. Identify the **tasks offered on each device**.
+2. Build a **comparison table of the UI journeys** (criteria relative to the tasks assigned to each device and to the specifics of each device).
+3. Identify the **impacted standard UIs** and **mock up the new adapted smartphone UIs**.
+4. Identify how to **detect the device change dynamically**.
+5. Identify how to **go from the smartphone UI to the kiosk UI**.
+6. Identify the **possibility of adding a chatbot** for taking orders.
 
-For the chosen sub-topic(s) the subject asks to:
-1. Identify the new UI goals for the scenario.
-2. Identify the impact on the ordering journey.
-3. Build a **comparison table** (criteria relative to personas' tasks and to the restaurant's goals vs the impact of the change on satisfaction and sales).
-4. Determine the impacted standard UIs and **mock up** the adapted ones.
-5. Identify how to **detect the change dynamically** (weather / crowd).
-6. Identify how to **go from the standard UI to the adapted UI and back**.
+Notes for this axis:
+- Platform is one element of the context-of-use triplet; here it changes between smartphone (mobile, personal, anywhere, small screen, touch, possibly before arriving) and kiosk (public, in-restaurant, large touch screen, fixed, payment and kitchen trigger).
+- The order state (cart, customisation) must **survive the handover** from smartphone to kiosk (continuity of experience, preserved state).
+- The user axis and the device axis interact: e.g. Jérémy (account) can pre-order on his phone and pick up/finalise at the kiosk in seconds; Alexovitch (no account, no French, slow) may still use the smartphone with language help or a chatbot. Define these combinations explicitly.
 
-### Axis 3 — Devices (excluded, kept here only for reference)
-Hybrid smartphone + kiosk flow, device-change detection, smartphone-to-kiosk handover, optional ordering chatbot. **Not part of our work.**
-
+### Axis 3 — Environment (excluded, kept only for reference)
+Weather (heatwave / bright sun, or heavy rain / freezing cold) and rush (calm restaurant mode vs rush mode). **Not part of our work.**
 ### Compositions
-The subject says to consider **compositions of the chosen adaptations** (e.g. a persona adaptation active at the same time as an environment adaptation). Priorities and conflicts must be defined explicitly.
+The subject says to consider **compositions of the chosen adaptations** (here: a persona adaptation active at the same time as a device adaptation, e.g. Alexovitch on smartphone vs Alexovitch on kiosk). Priorities and conflicts must be defined explicitly.
 
 ## 4. Planned work and evaluation
 
@@ -92,35 +94,34 @@ Code is hosted on Git; instructors have access. Source of truth for grading is t
 ## 5. Core adaptation concepts (course summary)
 
 - **Plasticity** (Joëlle Coutaz, Interact'99): the capacity of a UI to adapt to its context of use while preserving its usability.
-- **Context of use = triplet:** **User**, **Platform** (device), **Environment**. Adaptation reacts to a change in one element of the triplet.
+- **Context of use = triplet:** **User**, **Platform** (device), **Environment**. Adaptation reacts to a change in one element of the triplet. This project covers **User** and **Platform**.
 - **Adaptation at design time** (initiated by the user, then handled by the system) vs **at runtime** (initiated and handled by the system). This project targets **runtime adaptation**.
 - **Plasticity domain / threshold:** the set of contexts the UI covers; beyond the threshold the UI is no longer adequate.
 - **Do not confuse a feature and an adaptation:** a feature answers a user need; a change of context does not change the need, it introduces a variation.
 - **Adaptation matrix** (the core artefact) has 3 parts:
-  1. **Context variables** (inputs): the element of context that changes (e.g. attention drops, brightness changes, crowd rises).
+  1. **Context variables** (inputs): the element of context that changes (e.g. attention drops, brightness changes, device changes).
   2. **UI components** (outputs): modality, layout, textual content, dialogue flow — impact described on **content, presentation, dialogue**.
   3. **Transition rules:** how to go from state A (before change) to state B (after change).
   Construction method: list possible values of each element of the triplet → specify the context in which the value changes → for each value, identify tasks that need an adapted view → for each task, list the impact on content/presentation/dialogue → define transition rules. A matrix can be simplified depending on the impact of the change (e.g. brightness affects all tasks but only presentation).
-- **Worked examples from the course:** a QCM for children with ADHD (inattentive child: more explanations, animation, a small relaxing game, condition on response time); screen brightness (below X lux raise contrast, above Y lower it, otherwise standard).
+- **Worked examples from the course:** a QCM for children with ADHD (inattentive child: more explanations, animation, a small relaxing game, condition on response time); screen brightness (below X lux raise contrast, above Y lower it, otherwise standard); a user starting on a desktop whose app migrates to a nearby smartphone when the battery is low (task continuity across devices).
 - **Personalisation:** *static* (user-declared profile, or a pre-existing expert profile), *dynamic/passive* (system profiles automatically, starting from a prototype profile and refining), *interactive* (neutral product that learns; user is both active and passive; AI-enabled). Profile data may be sensitive: comply with **GDPR** (privacy, individual rights) and protect data with adequate security.
 - **User profile inference:** interaction history, behavioural habits, psychological state (stress, fatigue), context identification.
 
 ## 6. Continuity-of-experience guidelines (must be reflected in mock-ups and code)
 
 1. **Lower cognitive load:** hide information that is irrelevant at time T; facilitate action execution and verify the task was done correctly.
-2. **Preserve application state:** focus and in-progress data (typed text, open option, cart) survive the swap between standard and adapted views.
+2. **Preserve application state:** focus and in-progress data (typed text, open option, cart) survive the swap between standard and adapted views — and between devices.
 3. **Smooth visuals:** interpolate (e.g. size changes ~300 ms ease-in-out), never jump abruptly, no flicker; when text grows, neighbours move apart with a transition.
-4. **Choose the right moment (sensors):** react only to a significant and stable change (e.g. "bright sun" mode only if > 10 000 lux for 3 s); use **hysteresis** (e.g. activate above 80 %, deactivate below 50 %) to avoid oscillation.
+4. **Choose the right moment (sensors):** react only to a significant and stable change; use **hysteresis** (e.g. activate above 80 %, deactivate below 50 %) to avoid oscillation.
 5. **Keep the structure:** keep the screen skeleton during the session, keep critical buttons in the same place, reconfigure components rather than jumping to another screen.
 6. **Layout changes:** choose carefully between layouts (split-screen/list, focused/large grid, linear tunnel) and consider whether the change is occasional or persistent (ex.: inattentive child vs ADHD child).
 
 ## 7. Detection ideas (to refine in the matrices)
 
-Candidate signals the kiosk could use (all simulated or mocked in the front-end for now):
-- **User:** time between actions, input speed, navigation pattern (back-and-forth, hesitation), simultaneity of choices, modification of recipes/products, previous orders (loyalty/recognised customer), explicit choice at start (language, accessibility, "express" vs "guided").
-- **Weather:** temperature, brightness (lux), rain; from a weather feed or sensors.
-- **Rush:** queue length, number of orders in progress, kitchen load, average wait time, time of day.
-- **Transitions:** how a standard UI becomes adapted and back (threshold + stability delay + hysteresis, smooth animation, state preserved, reversible, user can override).
+Candidate signals (all simulated or mocked in the front-end for now):
+- **User:** customer account / login (known profile and order history), chosen language, time between actions, input speed, navigation pattern (back-and-forth, hesitation), simultaneity of choices, modification of recipes/products, explicit choice at start ("express" vs "guided").
+- **Device:** screen size and input type (user agent, viewport), kiosk-identifying signal (scan of a QR code displayed on the kiosk, order code, NFC, being logged in at the restaurant), proximity or geolocation of the smartphone, order status (draft on phone → to finalise at kiosk).
+- **Transitions:** how a standard UI becomes adapted and back, and how the order passes from smartphone to kiosk (threshold + stability delay, smooth animation, state preserved, reversible, user can override).
 
 ## 8. Domain vocabulary
 
@@ -130,20 +131,22 @@ Candidate signals the kiosk could use (all simulated or mocked in the front-end 
 - **Persona / user group:** archetype of a customer type used to design adapted journeys.
 - **Matrice d'adaptation / adaptation matrix:** table linking context changes to UI changes and transition rules.
 - **Contexte d'usage / context of use:** user + platform + environment.
+- **Dispositif / device:** the platform the customer interacts with (smartphone or kiosk).
+- **Handover / passage de relais:** moving an order in progress from the smartphone to the kiosk.
 - **IHM:** human–machine interface (French term for UI).
-- **Rush:** peak of customer attendance.
 
 ## 9. Current state of the repository
 
-- Only `README.md` (title), `subject_definition/` (the two instructor PDFs) and these AI-instruction files exist.
+- `README.md` (title), `subject_definition/` (the two instructor PDFs), `docs/tableau-comparatif-parcours.md` (French, Users axis comparison table) and these AI-instruction files.
 - **No technology stack, framework, build tool, test framework or code exists yet.** Do not assume one. If asked to scaffold, ask which stack the team wants, and update `AGENTS.md` (organisation section) afterwards.
 - Git: single branch `main` with an initial commit. Work on feature branches, never push to `main`.
 
 ## 10. Open questions (do not decide silently; ask the team)
 
-- Chosen **stack** (framework, language, styling, tests).
-- The **two personas** for the Users axis.
-- Within the Environment axis: **weather, rush, or both**, and which scenario(s).
-- Language of the UI text (French only, or multilingual).
+- Chosen **stack** (framework, language, styling, tests). A responsive web front-end would suit both a kiosk and a smartphone UI, but it is not decided.
+- Which **tasks run on the smartphone** and which on the **kiosk** (e.g. browse/customise on phone, finalise/pay/trigger kitchen at kiosk).
+- **Handover mechanism** (QR code, order code, account login, NFC).
+- Whether to include the **chatbot** (the subject only asks to identify its possibility) and for which persona.
+- Language of the UI text (French only, or multilingual — Alexovitch needs a non-French language).
 - Which AI techniques to explore in stage 2 (context identification, UI generation).
 - Group name and Slack channel.

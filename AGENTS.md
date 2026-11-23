@@ -14,7 +14,7 @@ Read [`context.md`](./context.md) first for the project background, scope and do
    - Files **read by AI agents** (`AGENTS.md`, `CLAUDE.md`, `context.md`, any other agent-instruction file) **→ English.**
    - Code identifiers (variables, functions, types, files, folders, branches) → English.
 4. **Do only what is asked.** No extra features, refactors, dependencies, files or documentation that were not requested. If something looks missing or ambiguous, ask or note it instead of guessing.
-5. **Out of scope:** the "Devices" axis of the subject (smartphone + kiosk hybrid, device handover, chatbot). Do not design, mock up or implement it. See `context.md`.
+5. **Scope:** the project covers the **Users** axis and the **Devices** axis (smartphone + kiosk). The **Environment** axis (weather, rush) is **out of scope**: do not design, mock up or implement it. See `context.md`.
 6. Never modify or delete `subject_definition/` (reference PDFs from the instructors).
 7. Never commit secrets, API keys, tokens or personal data.
 
@@ -52,9 +52,9 @@ The stack is not chosen yet. Whatever it is, keep these separations (adapt folde
 └── src/
     ├── ui/            # Presentation: components, layouts, themes (no business or adaptation logic)
     │   ├── standard/  # Standard UI, usable by every customer
-    │   └── adapted/   # Variants per persona / environment mode
+    │   └── adapted/   # Variants per persona / device (smartphone, kiosk)
     ├── adaptation/    # Adaptation engine
-    │   ├── context/   # Context detection (user profile, environment) -> normalised context state
+    │   ├── context/   # Context detection (user profile, device) -> normalised context state
     │   ├── rules/     # Adaptation rules, expressed as data (derived from the adaptation matrices)
     │   └── engine/    # Evaluates rules, resolves composition/conflicts, outputs an adaptation decision
     ├── domain/        # Ordering domain: products, menu, cart, order, payment (UI- and adaptation-agnostic)
@@ -67,7 +67,7 @@ Rules of thumb
 - Adaptation rules are **data, not scattered `if` statements** in components. One rule traces back to one row of an adaptation matrix.
 - Context detection and decision making are separate: a detector produces a context value; the engine turns context into an adaptation decision; the UI applies it.
 - Keep the engine behind an interface so the static-rules implementation and a later AI-based implementation (context identification, UI generation) are interchangeable.
-- Front-end first: the subject asks for front-end code "without interconnection". Mock data and simulated context inputs (e.g. a debug panel to force a persona or a mode) are welcome and live in a clearly named mock/dev area, never in production paths.
+- Front-end first: the subject asks for front-end code "without interconnection". Mock data and simulated context inputs (e.g. a debug panel to force a persona or a device) are welcome and live in a clearly named mock/dev area, never in production paths.
 
 ## Adaptive UI conventions (from the course)
 
@@ -77,14 +77,14 @@ Adaptations act on three levels; always state which one a change touches:
 3. **Dialogue** (interaction flow, behaviour, steps).
 
 When implementing an adaptation:
-- **Preserve state.** Focus, in-progress input, open options, cart and any ephemeral data survive a switch between standard and adapted UI.
+- **Preserve state.** Focus, in-progress input, open options, cart and any ephemeral data survive a switch between standard and adapted UI, and the order in progress survives the handover from smartphone to kiosk.
 - **Smooth transitions.** Animate size/position changes (about 300 ms, ease-in-out); never switch abruptly or flicker. Respect `prefers-reduced-motion`.
 - **Debounce sensor-driven changes.** Only react to a *significant, stable* change (e.g. a condition held for N seconds). Use **hysteresis** (distinct enter/exit thresholds) to avoid oscillating between modes. Thresholds are configuration.
 - **Keep the structure.** Keep the screen skeleton and critical buttons (validate, back, pay) at the same place; prefer reconfiguring components over jumping to another screen.
 - **Be reversible.** Every adaptation defines how to go back to the standard UI.
 - **Introduce new possibilities progressively but visibly** rather than silently rewriting the screen.
 - **Distinguish occasional from persistent changes** (a momentary state vs a stable profile) when choosing how deep to adapt.
-- **Compose adaptations.** User-axis and environment-axis adaptations can be active together; define priority and conflict resolution explicitly and test combined cases.
+- **Compose adaptations.** User-axis and device-axis adaptations can be active together; define priority and conflict resolution explicitly and test combined cases.
 - **Privacy.** Profiling must be minimal, transparent and GDPR-compliant: collect only what the adaptation needs, no sensitive data stored without need, no tracking beyond the session unless explicitly specified.
 
 ## Accessibility (minimum bar)
