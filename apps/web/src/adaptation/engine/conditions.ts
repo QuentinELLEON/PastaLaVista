@@ -39,5 +39,3 @@ export function evaluateCondition(
   if ('not' in condition) return !evaluateCondition(condition.not, facts, thresholds);
   return compare(facts[condition.fact], condition.op, resolveValue(condition.value, thresholds));
 }
-
-export { resolveValue };

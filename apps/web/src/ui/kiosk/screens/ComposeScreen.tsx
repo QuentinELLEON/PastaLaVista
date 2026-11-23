@@ -122,8 +122,11 @@ export function ComposeScreen() {
             </div>
           ))}
           <p style={{ padding: '16px 0', fontSize: 28, fontWeight: 800, color: 'var(--green)' }}>
-            {t('nutrition.total')} : {formatNumber(composer.totals.kcal, state.language)} kcal ·{' '}
-            {formatNumber(composer.totals.proteinG, state.language)} g
+            {t('nutrition.total')} :{' '}
+            {t('nutrition.line', {
+              kcal: formatNumber(composer.totals.kcal, state.language),
+              protein: formatNumber(composer.totals.proteinG, state.language),
+            })}
           </p>
         </section>
       ) : (

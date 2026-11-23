@@ -160,8 +160,11 @@ export function PhoneRecap() {
       </p>
       {config.content.showNutrition ? (
         <p className="p-sub">
-          {t('nutrition.totalOrder')} : {formatNumber(totals.kcal, state.language)} kcal ·{' '}
-          {formatNumber(totals.proteinG, state.language)} g
+          {t('nutrition.totalOrder')} :{' '}
+          {t('nutrition.line', {
+            kcal: formatNumber(totals.kcal, state.language),
+            protein: formatNumber(totals.proteinG, state.language),
+          })}
         </p>
       ) : null}
       <p className="p-sub">{t('phone.payAtKiosk')}</p>

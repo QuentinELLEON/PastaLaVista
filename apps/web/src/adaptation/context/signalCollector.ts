@@ -1,5 +1,5 @@
 import { THRESHOLDS, type Thresholds } from '../rules/thresholds.config';
-import { EMPTY_SIGNALS, type Signals } from './types';
+import type { Signals } from './types';
 
 export type Listener = () => void;
 
@@ -109,5 +109,3 @@ export class SignalCollector {
     this.listeners.forEach((listener) => listener());
   }
 }
-
-export { EMPTY_SIGNALS };

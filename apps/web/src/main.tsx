@@ -5,6 +5,7 @@ import { App } from './App';
 import './ui/tokens.css';
 import './ui/base.css';
 import './ui/components.css';
+import './ui/chat.css';
 
 const container = document.getElementById('root');
 if (!container) throw new Error('Élément #root introuvable');

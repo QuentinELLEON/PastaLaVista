@@ -198,3 +198,20 @@
   overflow-y: auto;
   padding: 16px;
 }
+
+.p-chatbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.p-chatbar .btn {
+  --btn-h: 44px;
+  padding: 0 14px;
+  font-size: 15px;
+  white-space: nowrap;
+}

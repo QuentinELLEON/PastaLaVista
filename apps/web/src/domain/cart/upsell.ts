@@ -19,8 +19,12 @@ function drinksNotInCart(catalog: Catalog, cart: OrderLine[]): ProductDto[] {
   return productsOfKind(catalog, 'drink').filter((drink) => !inCart.has(drink.id));
 }
 
+/** Lignes auxquelles on peut ajouter une protéine : assiettes libres et compositions populaires. */
 function plateLines(catalog: Catalog, cart: OrderLine[]): OrderLine[] {
-  return cart.filter((line) => catalog.byId.get(line.productId)?.kind === 'pasta');
+  return cart.filter((line) => {
+    const kind = catalog.byId.get(line.productId)?.kind;
+    return kind === 'pasta' || kind === 'composition';
+  });
 }
 
 /**

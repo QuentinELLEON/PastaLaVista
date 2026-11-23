@@ -154,8 +154,11 @@ export function PayScreen() {
             padding: '14px 24px',
           }}
         >
-          {t('nutrition.totalOrder')} : {formatNumber(totals.kcal, state.language)} kcal ·{' '}
-          {formatNumber(totals.proteinG, state.language)} g
+          {t('nutrition.totalOrder')} :{' '}
+          {t('nutrition.line', {
+            kcal: formatNumber(totals.kcal, state.language),
+            protein: formatNumber(totals.proteinG, state.language),
+          })}
         </p>
       ) : null}
 
@@ -192,7 +195,7 @@ export function PayScreen() {
                 <small>
                   {formatSurcharge(product.priceCents, state.language)}
                   {upsell.kind === 'protein'
-                    ? ` · ${product.kcal} kcal · ${product.proteinG} g`
+                    ? ` · ${t('nutrition.line', { kcal: product.kcal, protein: product.proteinG })}`
                     : ''}
                 </small>
               </button>

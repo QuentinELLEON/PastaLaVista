@@ -9,6 +9,7 @@ import { Button } from '../shared/Button';
 import { HelpPrompt } from '../shared/HelpPrompt';
 import { StepIndicator, TerminalStrip, TopBar, type KioskStep } from './KioskParts';
 import './kiosk.css';
+import './kiosk-screens.css';
 
 /** Met la borne 810 x 1440 à l'échelle de la fenêtre (rendu réaliste sur n'importe quel écran). */
 function useFitScale(): number {

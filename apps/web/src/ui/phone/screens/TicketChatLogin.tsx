@@ -80,12 +80,12 @@ export function PhoneChat() {
 
   return (
     <PhoneLayout fill showUrlBar>
-      <div className="p-top" style={{ height: 'auto', padding: '8px 16px' }}>
-        <Button signal="back" onClick={() => navigate('/m')} style={{ height: 44 }}>
+      <div className="p-chatbar">
+        <Button signal="back" onClick={() => navigate('/m')}>
           {t('common.back')}
         </Button>
         <b>{t('chat.title')}</b>
-        <Button variant="primary" onClick={() => navigate('/m/recap')} style={{ height: 44 }}>
+        <Button variant="primary" onClick={() => navigate('/m/recap')}>
           {t('phone.viewOrder')}
         </Button>
       </div>
