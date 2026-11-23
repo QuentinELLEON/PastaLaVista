@@ -1,0 +1,322 @@
+/* Borne : portrait 810 x 1440, ossature multi-zones identique sur tous les écrans (IHM standard ou adaptée) */
+.kiosk-viewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #d9d4cc;
+}
+.kiosk {
+  --btn-h: 100px;
+  --btn-font: 32px;
+  --touch-min: 72px;
+  --qty-size: 72px;
+  --radius: 20px;
+  --lang-h: 72px;
+  --help-btn-h: 72px;
+  --nutrition-font: 20px;
+  --k-top: 112px;
+  --k-steps: 72px;
+  --k-rail: 196px;
+  --k-dock: 392px;
+  --k-dock-checkout: 232px;
+  --k-terminal: 84px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 810px;
+  height: 1440px;
+  transform: translate(-50%, -50%) scale(var(--kiosk-scale, 1));
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+/* Adaptation « confortable » (mode guidé) : cibles et textes plus grands, même ossature */
+.kiosk[data-density='comfortable'] {
+  --help-btn-h: 84px;
+  --row-h: 160px;
+}
+
+.k-top {
+  height: var(--k-top);
+  flex: none;
+  background: var(--ink);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+}
+.k-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 800;
+  font-size: 34px;
+  letter-spacing: -0.5px;
+}
+.k-tools {
+  display: flex;
+  gap: 12px;
+}
+.tool-btn {
+  height: 72px;
+  min-width: 72px;
+  padding: 0 20px;
+  border-radius: 18px;
+  border: 2px solid var(--dark-line);
+  background: var(--ink-2);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 800;
+  transition: var(--adapt-transition);
+}
+.tool-btn[aria-pressed='true'] {
+  background: #fff;
+  color: var(--ink);
+}
+.tool-btn--ok {
+  background: var(--green-soft);
+  color: var(--green);
+  border-color: var(--green);
+  cursor: default;
+}
+
+.k-steps {
+  height: var(--k-steps);
+  flex: none;
+  background: var(--surface);
+  border-bottom: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 28px;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--muted);
+  list-style: none;
+  margin: 0;
+}
+.k-steps li[aria-current='step'] {
+  background: var(--red);
+  color: #fff;
+  padding: 8px 22px;
+  border-radius: 24px;
+}
+.k-steps li[data-done='true'] {
+  color: var(--green);
+}
+
+.k-mid {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.k-rail {
+  width: var(--k-rail);
+  flex: none;
+  background: var(--surface);
+  border-right: 2px solid var(--line);
+  display: flex;
+  flex-direction: column;
+}
+.rail-item {
+  flex: none;
+  height: 144px;
+  border: 0;
+  border-bottom: 2px solid var(--line);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  padding: 0 8px;
+  transition: var(--adapt-transition);
+}
+.rail-item[aria-current] {
+  background: var(--red);
+  color: #fff;
+}
+.rail-item__badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 3px solid currentColor;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+}
+.rail-item[data-done='true'] .rail-item__badge {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+.k-content {
+  flex: 1;
+  min-width: 0;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.k-content > * {
+  flex-shrink: 0;
+}
+.k-content--wide {
+  padding: 22px 28px;
+}
+.k-content--bare {
+  padding: 0;
+  gap: 0;
+}
+.k-title {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.k-subtitle {
+  font-size: 22px;
+  color: var(--muted);
+}
+.k-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.k-grid--compact {
+  --tile-h: 250px;
+  --tile-art-h: 130px;
+}
+.k-steps__sep {
+  color: var(--muted);
+}
+.k-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.k-help {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 18px;
+  z-index: 5;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.k-dock {
+  height: var(--k-dock);
+  flex: none;
+  background: var(--surface);
+  border-top: 5px solid var(--ink);
+  padding: 16px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: var(--adapt-transition);
+}
+.k-dock--checkout {
+  height: var(--k-dock-checkout);
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 28px;
+}
+.k-dock__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 28px;
+  font-weight: 800;
+}
+.k-dock__lines {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.k-dock__line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 54px;
+  border-bottom: 2px solid var(--line);
+  font-size: 24px;
+  font-weight: 700;
+}
+.k-dock__line span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.k-dock__row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.k-total {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1.15;
+}
+.k-total b {
+  display: block;
+  font-size: 44px;
+  color: var(--ink);
+  font-weight: 800;
+}
+.k-dock--checkout .k-total b {
+  font-size: 50px;
+}
+.k-dock .btn--grow,
+.k-dock__cta {
+  flex: none;
+  width: 340px;
+}
+.k-dock--checkout .btn {
+  --btn-h: 110px;
+}
+
+.k-terminal {
+  height: var(--k-terminal);
+  flex: none;
+  background: var(--ink);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  font-size: 24px;
+  font-weight: 700;
+  transition: var(--adapt-transition);
+}
+.k-terminal--active {
+  background: var(--green);
+  font-size: 26px;
+  font-weight: 800;
+}
+.k-terminal__slot {
+  width: 150px;
+  height: 22px;
+  border-radius: 11px;
+  background: #000;
+  border: 2px solid var(--dark-line);
+}
+.k-terminal--active .k-terminal__slot {
+  border-color: #fff;
+}

@@ -1,0 +1,58 @@
+/* Tokens de design partagés par la borne et le smartphone (context.md section 11.2) */
+:root {
+  --ink: #1c1b1a;
+  --ink-2: #2c2a28;
+  --muted: #5b5650;
+  --bg: #f1eee9;
+  --surface: #ffffff;
+  --line: #ddd7cf;
+  --dark-line: #57524c;
+  --red: #c8321b;
+  --red-soft: #fce9e4;
+  --green: #1f6b43;
+  --green-soft: #e1f1e7;
+  --accent: #e9b44c;
+  --accent-soft: #fff1d6;
+  --focus: #1d4ed8;
+
+  --font: Manrope, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Transitions d'adaptation : environ 300 ms, ease-in-out (désactivées si l'utilisateur le demande) */
+  --adapt-ms: 300ms;
+  --adapt-ease: ease-in-out;
+  --adapt-transition:
+    background-color var(--adapt-ms) var(--adapt-ease), color var(--adapt-ms) var(--adapt-ease),
+    border-color var(--adapt-ms) var(--adapt-ease), height var(--adapt-ms) var(--adapt-ease),
+    min-height var(--adapt-ms) var(--adapt-ease), padding var(--adapt-ms) var(--adapt-ease),
+    gap var(--adapt-ms) var(--adapt-ease), font-size var(--adapt-ms) var(--adapt-ease),
+    opacity var(--adapt-ms) var(--adapt-ease), transform var(--adapt-ms) var(--adapt-ease);
+
+  /* Tailles tactiles : smartphone >= 44 px, borne >= 72 px (surchargées par la disposition) */
+  --touch-min: 44px;
+  --btn-h: 56px;
+  --radius: 16px;
+}
+
+/* Accessibilité : contraste élevé (règle RA1), prioritaire sur toutes les adaptations */
+[data-contrast='high'] {
+  --muted: #1c1b1a;
+  --line: #1c1b1a;
+  --bg: #ffffff;
+  --red: #a52411;
+  --green: #14502f;
+  --red-soft: #ffffff;
+  --green-soft: #ffffff;
+  --accent-soft: #ffffff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --adapt-ms: 0.01ms;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

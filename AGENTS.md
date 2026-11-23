@@ -37,12 +37,12 @@ General
 - Comments explain *why*, not *what*. Write them in French. Keep them rare and accurate.
 - Keep functions pure where possible; isolate side effects (I/O, sensors, timers, storage) behind small modules.
 - Add or update tests for any logic you add, especially the adaptation rules and the context detection.
-- Follow the formatter/linter once configured; do not fight it. Ask before adding tooling or dependencies beyond React and Vite.
+- Follow the formatter/linter (ESLint + Prettier, `npm run lint`, `npm run format`); do not fight it. Ask before adding tooling or dependencies beyond the ones already in the workspaces.
 - Build the UI from **small reusable React components** shared by the kiosk and the smartphone (buttons, quantity stepper, nutrition badge, QR code, language selector...). Kiosk and smartphone share design tokens and base components; only the layouts differ. The component inventory is in the design canvas ("Composants React").
 
 ## Code organisation
 
-The stack is **React + Vite**. Keep these separations (the tree is the target layout; adapt folder names to React/Vite idioms as the code grows):
+The repository is an **npm-workspaces monorepo** in **TypeScript (strict)**: React + Vite on the front, Fastify on the back, shared types and schemas in a package. Keep these separations:
 
 ```
 /
@@ -50,25 +50,37 @@ The stack is **React + Vite**. Keep these separations (the tree is the target la
 ├── README.md                            # Human-facing, French
 ├── docs/                                # Human-facing documentation, French
 ├── subject_definition/                  # Instructor PDFs, read-only
-└── src/
-    ├── ui/            # Presentation: components, layouts, themes (no business or adaptation logic)
-    │   ├── standard/  # Standard UI, usable by every customer
-    │   └── adapted/   # Variants per persona / device (smartphone, kiosk)
+├── prototypes/                          # Standalone HTML prototype (visual reference)
+├── packages/shared/src/                 # DTO types, zod schemas, pricing/nutrition, adaptation rule schema
+├── apps/api/src/                        # Node API
+│   ├── domain/        # entities, ports (repository interfaces), services: no storage knowledge
+│   ├── infrastructure/# memory repositories, seeds, system clock/ids
+│   ├── chat/          # rule-based ChatEngine
+│   ├── http/          # routes, error format, logging
+│   └── composition-root.ts   # the ONLY file choosing implementations
+└── apps/web/src/
+    ├── ui/            # Presentation: shared components, kiosk + phone layouts and screens (no business or adaptation logic)
     ├── adaptation/    # Adaptation engine
-    │   ├── context/   # Context detection (user profile, device) -> normalised context state
-    │   ├── rules/     # Adaptation rules, expressed as data (derived from the adaptation matrices)
-    │   └── engine/    # Evaluates rules, resolves composition/conflicts, outputs an adaptation decision
-    ├── domain/        # Ordering domain: products, menu, cart, order, payment (UI- and adaptation-agnostic)
-    └── shared/        # Constants, types, utilities
+    │   ├── context/   # signals, guidance score + hysteresis, device detection -> normalised Context
+    │   ├── rules/     # Adaptation rules as data + thresholds config (derived from the adaptation matrices)
+    │   ├── engine/    # AdaptationEngine interface, static rules engine, conflict resolution
+    │   └── provider/  # React provider applying the UiConfig (step-boundary switching)
+    ├── domain/        # Cart, plate, upsell, session reducer (UI- and adaptation-agnostic)
+    ├── state/         # React providers for the session and the catalogue
+    ├── services/      # HTTP client of the API
+    ├── i18n/          # fr / en / ru dictionaries
+    ├── shared/        # Constants, formatting, env
+    ├── mock/          # Demo accounts of the SIMULATED authentication
+    └── dev/           # Debug panel and simulators (never in production paths)
 ```
 
 Rules of thumb
-- Dependencies point inward: `ui` → `adaptation`/`domain` → `shared`. `domain` knows nothing about `ui` or `adaptation`.
+- Dependencies point inward: `ui` → `adaptation`/`domain`/`state`/`services` → `shared`. `domain` knows nothing about `ui` or `adaptation`. On the API: `http` → `domain/services` → `domain/ports` ← `infrastructure`.
 - The standard UI must work on its own, with the adaptation engine disabled. Adaptations are an overlay, never a prerequisite.
 - Adaptation rules are **data, not scattered `if` statements** in components. One rule traces back to one row of an adaptation matrix.
 - Context detection and decision making are separate: a detector produces a context value; the engine turns context into an adaptation decision; the UI applies it.
 - Keep the engine behind an interface so the static-rules implementation and a later AI-based implementation (context identification, UI generation) are interchangeable.
-- Front-end first: the subject asks for front-end code "without interconnection". Mock data and simulated context inputs (e.g. a debug panel to force a persona or a device) are welcome and live in a clearly named mock/dev area, never in production paths.
+- The API has **no database yet**: repositories are interfaces in the domain with in-memory implementations; keep services storage-agnostic and run the repository contract tests (`apps/api/test/contracts`) against any new implementation. Mock data and simulated context inputs (the debug panel, the scan simulator) live in `dev/` or `mock/`, never in production paths.
 
 ## Adaptive UI conventions (from the course)
 
@@ -100,7 +112,7 @@ When implementing an adaptation:
 - Human documentation (`README.md`, `docs/`, diagrams, matrices, specs, mock-up descriptions) is written in **French**, clear and concise, with headings and tables where useful.
 - AI-facing files stay in **English**. When a rule changes, update `AGENTS.md`; `CLAUDE.md` should stay a thin wrapper.
 - Document decisions that are not obvious from code (why a threshold, why a rule priority). Keep docs next to what they describe and up to date with the code.
-- Adaptation matrices and rules live in `docs/` (French) and must stay consistent with the rule data in `src/adaptation/rules/`.
+- Adaptation matrices and rules live in `docs/` (French) and must stay consistent with the rule data in `apps/web/src/adaptation/rules/` (differences are listed in `docs/architecture.md`, section 9).
 
 ## Working method for agents
 

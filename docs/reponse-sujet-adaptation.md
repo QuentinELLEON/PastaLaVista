@@ -27,10 +27,10 @@ Ce document répond point par point aux axes **Utilisateurs** et **Dispositifs**
 | Axe Utilisateurs (obligatoire) | Fait : 2 personas, Jérémy et Alexovitch |
 | Un axe au choix parmi Dispositifs et Environnement | **Dispositifs** (smartphone + borne). L'axe Environnement (météo, rush) n'est pas traité |
 | Compositions des adaptations | Utilisateur × dispositif (section 5) |
-| Maquettes haute fidélité | Canvas Claude Design (privé) et fichier `prototypes/pastalavista-prototype.html` |
-| Code front-end sans interconnexion | À faire en React + Vite à partir du prototype |
+| Maquettes haute fidélité | Canvas Claude Design (privé) et fichier `prototypes/pastalavista-prototype-hifi.html` |
+| Code front-end sans interconnexion | Fait : application React + Vite et API Node, voir [architecture.md](architecture.md) |
 | Matrices et règles d'adaptation | Sections 3, 4 et 6 |
-| Moteur d'adaptation et IA (étape 2) | Pistes en section 8 |
+| Moteur d'adaptation et IA (étape 2) | Moteur à règles statiques implémenté ; pistes IA en section 8 |
 
 Documents liés : [axe-utilisateurs.md](axe-utilisateurs.md), [axe-dispositifs.md](axe-dispositifs.md), [tableau-comparatif-parcours.md](tableau-comparatif-parcours.md), [adaptation-alexei-lenteur.md](adaptation-alexei-lenteur.md), [requirements-prototype.md](requirements-prototype.md).
 
@@ -110,7 +110,7 @@ Critères choisis par rapport aux trois tâches principales (contenu, présentat
 
 ### Point 4 — Maquetter les IHM standard et celles des deux personas
 
-Les maquettes haute fidélité sont dans le canvas Claude Design (privé) et dans [prototypes/pastalavista-prototype.html](../prototypes/pastalavista-prototype.html), navigable.
+Les maquettes haute fidélité sont dans le canvas Claude Design (privé) et dans [prototypes/pastalavista-prototype-hifi.html](../prototypes/pastalavista-prototype-hifi.html), navigable.
 
 | Parcours | Écrans |
 |---|---|
