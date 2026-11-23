@@ -1,0 +1,1193 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PastaLaVista – Prototype haute fidélité</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1C1B1A;--ink2:#2C2A28;--muted:#5B5650;--bg:#F1EEE9;--line:#DDD7CF;--red:#C8321B;--red-soft:#FCE9E4;--green:#1F6B43;--green-soft:#E1F1E7}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:Manrope,system-ui,sans-serif;background:#D9D4CC;color:#1C1B1A;display:flex;flex-direction:column}
+.bar{flex:none;display:flex;align-items:center;gap:14px;padding:10px 16px;background:#1C1B1A;color:#fff;font-size:15px}
+.bar b{font-size:16px}
+.bar select{font:inherit;font-size:15px;padding:8px 10px;border-radius:8px;border:0;max-width:60vw}
+.bar span{opacity:.75;margin-left:auto}
+.stage{flex:1;min-height:0;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto}
+.frame{position:relative;flex:none;box-shadow:0 12px 40px rgba(0,0,0,.35);border-radius:14px;overflow:hidden;background:#fff}
+.frame>.screen{position:absolute;left:0;top:0;transform-origin:0 0}
+.screen[hidden]{display:none}
+</style>
+</head>
+<body>
+<header class="bar">
+  <b>PastaLaVista · prototype</b>
+  <label for="nav" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Écran</label>
+  <select id="nav"><optgroup label="Borne · IHM standard"><option value="Main">Standard 1 · Accueil</option><option value="standard-menu">Standard 2 · Menu</option><option value="standard-2-composer">Standard 3 · Composer son assiette</option><option value="standard-3-paiement">Standard 4 · Paiement</option></optgroup><optgroup label="Borne · Jérémy, l'habitué"><option value="jeremy-1-accueil">Jérémy 1 · Accueil reconnu</option><option value="jeremy-2-paiement">Jérémy 2 · Paiement express</option></optgroup><optgroup label="Borne · Alexovitch, le touriste"><option value="alexei-1-langue">Alexovitch 1 · Choix de la langue</option><option value="alexei-2-concept">Alexovitch 2 · Découvrir le concept</option><option value="alexei-3-composer">Alexovitch 3 · Composition guidée</option><option value="alexei-4-paiement">Alexovitch 4 · Récapitulatif et où payer</option></optgroup><optgroup label="Smartphone → borne"><option value="phone-1-jeremy">Smartphone 1 · Jérémy prépare sa commande</option><option value="phone-2-jeremy-qr">Smartphone 2 · QR code de commande</option><option value="phone-3-alexei-chatbot">Smartphone 3 · Alexovitch et le chatbot</option><option value="kiosk-retrouver-commande">Borne · Commande retrouvée</option></optgroup></select>
+  <span>Cliquez dans l'écran pour naviguer · données fictives</span>
+</header>
+<main class="stage"><div class="frame" id="frame">
+<section class="screen" id="s-Main" data-w="810" data-h="1440" data-title="Standard 1 · Accueil" hidden>
+<style>
+#s-Main *{box-sizing:border-box}
+#s-Main a{text-decoration:none;color:inherit}
+#s-Main h1,#s-Main h2,#s-Main h3,#s-Main p{margin:0}
+#s-Main button{font:inherit;color:inherit}
+#s-Main .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-Main .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-Main .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-Main .tools{display:flex;gap:12px}
+#s-Main .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-Main .term{height:84px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:24px;font-weight:700}
+#s-Main .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #57524C}
+#s-Main .big{height:250px;border-radius:30px;border:4px solid var(--ink);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-size:44px;font-weight:800;cursor:pointer}
+#s-Main .lg{height:64px;border-radius:14px;border:3px solid var(--line);background:#fff;font-size:24px;font-weight:800;cursor:pointer}
+#s-Main .lg.on{border-color:var(--red);background:var(--red-soft)}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <a class="tl" href="#alexei-1-langue" aria-label="Changer de langue"><svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-9 10-9 26 0 36M24 6c9 10 9 26 0 36"/></svg>FR</a>
+      <button type="button" class="tl" aria-label="Accessibilité"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Aide" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <section style="height:610px;flex:none;background:var(--red);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:0 40px" aria-label="Bienvenue">
+    <svg width="290" height="290" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#fff"/><circle cx="32" cy="32" r="23" fill="#D9452B" stroke="#8E2A1A" stroke-width="1"/><g fill="#E9B44C" stroke="#B9831A" stroke-width="1.2"><rect x="13" y="25" width="24" height="10" rx="5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="24" height="10" rx="5" transform="rotate(-25 40 38)"/><rect x="20" y="17" width="22" height="9" rx="4.5" transform="rotate(15 31 21)"/></g><circle cx="46" cy="20" r="2.5" fill="#1F6B43"/><circle cx="20" cy="46" r="2.5" fill="#1F6B43"/></svg>
+    <h1 style="font-size:78px;line-height:1.02;font-weight:800;letter-spacing:-2px">Vos pâtes,<br>comme vous les aimez</h1>
+    <p style="font-size:32px;font-weight:600;opacity:.95">Touchez pour commander</p>
+  </section>
+
+  <section style="flex:1;min-height:0;padding:26px 28px;display:flex;flex-direction:column;gap:20px" aria-label="Commencer">
+    <h2 style="font-size:36px;font-weight:800">Où mangez-vous ?</h2>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px">
+      <a href="#standard-menu" class="big"><svg width="84" height="84" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="17"/><circle cx="24" cy="24" r="8"/></svg>Sur place</a>
+      <a href="#standard-menu" class="big"><svg width="84" height="84" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 16h28l-2 26H12z"/><path d="M18 20v-5a6 6 0 0 1 12 0v5"/></svg>À emporter</a>
+    </div>
+    <div style="display:flex;gap:20px;align-items:stretch;margin-top:auto">
+      <a href="#jeremy-1-accueil" style="flex:1;display:flex;align-items:center;gap:20px;background:#fff;border:3px solid var(--line);border-radius:24px;padding:18px" aria-label="Se connecter avec le QR code (simulation)">
+        <svg viewBox="-1 -1 27 27" width="150" height="150" role="img" aria-label="QR code (maquette)"><rect x="-1" y="-1" width="27" height="27" fill="#fff"/><path fill="#1C1B1A" d="M8 0h1v1h-1zM10 0h1v1h-1zM11 0h1v1h-1zM13 0h2v1h-2zM16 0h1v1h-1zM11 1h6v1h-6zM8 2h1v1h-1zM11 2h1v1h-1zM12 2h1v1h-1zM16 2h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM12 3h1v1h-1zM13 3h1v1h-1zM14 3h1v1h-1zM16 3h1v1h-1zM8 4h1v1h-1zM10 4h3v1h-3zM13 4h1v1h-1zM14 4h1v1h-1zM15 4h1v1h-1zM16 4h1v1h-1zM8 5h1v1h-1zM10 5h1v1h-1zM11 5h1v1h-1zM13 5h1v1h-1zM14 5h1v1h-1zM15 5h2v1h-2zM8 6h1v1h-1zM9 6h1v1h-1zM10 6h1v1h-1zM11 6h1v1h-1zM13 6h1v1h-1zM15 6h1v1h-1zM8 7h1v1h-1zM11 7h2v1h-2zM13 7h1v1h-1zM14 7h1v1h-1zM16 7h1v1h-1zM1 8h1v1h-1zM4 8h1v1h-1zM5 8h6v1h-6zM11 8h1v1h-1zM16 8h2v1h-2zM20 8h1v1h-1zM21 8h1v1h-1zM22 8h1v1h-1zM23 8h1v1h-1zM4 9h1v1h-1zM7 9h1v1h-1zM11 9h1v1h-1zM13 9h1v1h-1zM17 9h1v1h-1zM19 9h1v1h-1zM20 9h1v1h-1zM21 9h1v1h-1zM22 9h1v1h-1zM23 9h1v1h-1zM0 10h2v1h-2zM2 10h1v1h-1zM4 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM9 10h1v1h-1zM10 10h2v1h-2zM15 10h5v1h-5zM20 10h1v1h-1zM22 10h2v1h-2zM24 10h1v1h-1zM1 11h1v1h-1zM2 11h3v1h-3zM5 11h2v1h-2zM7 11h1v1h-1zM12 11h4v1h-4zM16 11h2v1h-2zM21 11h1v1h-1zM23 11h1v1h-1zM0 12h1v1h-1zM2 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM11 12h1v1h-1zM16 12h1v1h-1zM18 12h2v1h-2zM21 12h1v1h-1zM22 12h1v1h-1zM23 12h1v1h-1zM24 12h1v1h-1zM5 13h1v1h-1zM6 13h3v1h-3zM13 13h1v1h-1zM15 13h1v1h-1zM19 13h2v1h-2zM21 13h1v1h-1zM23 13h1v1h-1zM0 14h1v1h-1zM1 14h2v1h-2zM4 14h3v1h-3zM8 14h2v1h-2zM11 14h1v1h-1zM12 14h2v1h-2zM14 14h1v1h-1zM15 14h1v1h-1zM16 14h9v1h-9zM0 15h1v1h-1zM6 15h1v1h-1zM9 15h1v1h-1zM10 15h1v1h-1zM12 15h1v1h-1zM13 15h1v1h-1zM14 15h1v1h-1zM15 15h1v1h-1zM16 15h1v1h-1zM19 15h1v1h-1zM22 15h3v1h-3zM3 16h2v1h-2zM7 16h1v1h-1zM8 16h1v1h-1zM9 16h3v1h-3zM12 16h1v1h-1zM14 16h1v1h-1zM15 16h4v1h-4zM23 16h1v1h-1zM10 17h1v1h-1zM14 17h1v1h-1zM19 17h1v1h-1zM20 17h4v1h-4zM8 18h1v1h-1zM10 18h1v1h-1zM13 18h1v1h-1zM18 18h1v1h-1zM20 18h5v1h-5zM8 19h1v1h-1zM16 19h1v1h-1zM18 19h1v1h-1zM19 19h3v1h-3zM22 19h1v1h-1zM23 19h1v1h-1zM24 19h1v1h-1zM10 20h1v1h-1zM11 20h4v1h-4zM15 20h1v1h-1zM17 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1zM21 20h1v1h-1zM23 20h1v1h-1zM9 21h1v1h-1zM10 21h5v1h-5zM15 21h1v1h-1zM16 21h1v1h-1zM21 21h1v1h-1zM24 21h1v1h-1zM13 22h1v1h-1zM16 22h3v1h-3zM19 22h3v1h-3zM24 22h1v1h-1zM8 23h1v1h-1zM10 23h1v1h-1zM13 23h2v1h-2zM15 23h1v1h-1zM17 23h1v1h-1zM19 23h2v1h-2zM21 23h1v1h-1zM22 23h1v1h-1zM23 23h1v1h-1zM24 23h1v1h-1zM9 24h1v1h-1zM11 24h2v1h-2zM13 24h1v1h-1zM18 24h1v1h-1zM19 24h2v1h-2zM22 24h3v1h-3z"/><g fill="none" stroke="#1C1B1A" stroke-width="1"><rect x="0.5" y="0.5" width="6" height="6"/><rect x="18.5" y="0.5" width="6" height="6"/><rect x="0.5" y="18.5" width="6" height="6"/></g><g fill="#1C1B1A"><rect x="2" y="2" width="3" height="3"/><rect x="20" y="2" width="3" height="3"/><rect x="2" y="20" width="3" height="3"/></g></svg>
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <h3 style="font-size:30px;font-weight:800">Déjà client ?</h3>
+          <p style="font-size:22px;line-height:1.3;color:var(--muted)">Scannez ce code avec votre téléphone.</p>
+          <p style="font-size:20px;font-weight:800;color:var(--green)">Prototype : toucher pour simuler</p>
+        </div>
+      </a>
+      <div style="width:290px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:center" role="group" aria-label="Langues">
+        <button type="button" class="lg on" aria-pressed="true">FR</button>
+        <button type="button" class="lg" aria-pressed="false">EN</button>
+        <button type="button" class="lg" aria-pressed="false">RU</button>
+        <button type="button" class="lg" aria-pressed="false">ES</button>
+        <button type="button" class="lg" aria-pressed="false">DE</button>
+        <button type="button" class="lg" aria-pressed="false">IT</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Terminal de paiement par carte ici</footer>
+</div>
+</section>
+<section class="screen" id="s-standard-menu" data-w="810" data-h="1440" data-title="Standard 2 · Menu" hidden>
+<style>
+#s-standard-menu *{box-sizing:border-box}
+#s-standard-menu a{text-decoration:none;color:inherit}
+#s-standard-menu h1,#s-standard-menu h2,#s-standard-menu h3,#s-standard-menu p{margin:0}
+#s-standard-menu button{font:inherit;color:inherit}
+#s-standard-menu .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-standard-menu .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-standard-menu .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-standard-menu .tools{display:flex;gap:12px}
+#s-standard-menu .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-standard-menu .crumbs{height:72px;flex:none;background:#fff;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;font-size:24px;font-weight:800;color:var(--muted)}
+#s-standard-menu .crumbs .on{color:#fff;background:var(--red);padding:8px 22px;border-radius:24px}
+#s-standard-menu .mid{flex:1;min-height:0;display:flex}
+#s-standard-menu .rail{width:196px;flex:none;background:#fff;border-right:2px solid var(--line);display:flex;flex-direction:column}
+#s-standard-menu .ri{flex:none;height:144px;border:0;border-bottom:2px solid var(--line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:22px;font-weight:800;text-align:center;padding:0 8px;cursor:pointer}
+#s-standard-menu .ri.on{background:var(--red);color:#fff}
+#s-standard-menu .main{flex:1;min-width:0;padding:22px;display:flex;flex-direction:column;gap:18px;overflow:hidden}
+#s-standard-menu .h2{font-size:38px;font-weight:800;letter-spacing:-.5px}
+#s-standard-menu .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+#s-standard-menu .tile{height:300px;background:#fff;border:3px solid var(--line);border-radius:26px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;padding:0;text-align:left}
+#s-standard-menu .art{height:124px;flex:none;background:#FFF1D6;display:grid;place-items:center}
+#s-standard-menu .tb{flex:1;padding:12px 16px;display:flex;flex-direction:column;gap:2px}
+#s-standard-menu .tb b{font-size:26px;font-weight:800}
+#s-standard-menu .tb small{font-size:20px;color:var(--muted);line-height:1.25}
+#s-standard-menu .pr{margin-top:auto;display:flex;align-items:center;justify-content:space-between;font-size:26px;font-weight:800}
+#s-standard-menu .add{width:56px;height:56px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:36px;font-weight:800}
+#s-standard-menu .dock{height:392px;flex:none;background:#fff;border-top:5px solid var(--ink);padding:16px 24px 20px;display:flex;flex-direction:column;gap:10px}
+#s-standard-menu .dh{display:flex;align-items:center;justify-content:space-between;font-size:28px;font-weight:800}
+#s-standard-menu .dl{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#s-standard-menu .ln{display:flex;align-items:center;gap:14px;height:54px;border-bottom:2px solid var(--line);font-size:24px;font-weight:700}
+#s-standard-menu .ln span{flex:1}
+#s-standard-menu .dt{display:flex;align-items:center;gap:16px}
+#s-standard-menu .tot{font-size:26px;font-weight:700;color:var(--muted);line-height:1.15}
+#s-standard-menu .tot b{display:block;font-size:44px;color:var(--ink);font-weight:800}
+#s-standard-menu .bn{height:100px;border-radius:20px;font-size:32px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:0 28px;cursor:pointer;border:4px solid var(--ink);background:#fff;color:var(--ink)}
+#s-standard-menu .bn.p{flex:1;background:var(--red);border-color:var(--red);color:#fff}
+#s-standard-menu .bn.x{border-color:var(--red);color:var(--red)}
+#s-standard-menu .term{height:84px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:24px;font-weight:700}
+#s-standard-menu .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #57524C}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <a class="tl" href="#alexei-1-langue" aria-label="Changer de langue"><svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-9 10-9 26 0 36M24 6c9 10 9 26 0 36"/></svg>FR</a>
+      <button type="button" class="tl" aria-label="Accessibilité"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Aide" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <nav class="crumbs" aria-label="Étapes de la commande"><span class="on">1 Choisir</span>›<span>2 Commander</span>›<span>3 Payer</span></nav>
+
+  <div class="mid">
+    <nav class="rail" aria-label="Catégories">
+      <a class="ri" href="#standard-2-composer"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="17"/><path d="M24 15v18M15 24h18"/></svg>Composer</a>
+      <button type="button" class="ri on" aria-current="true"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M24 6l5.5 11.5L42 19l-9 8.8L35.2 41 24 35l-11.2 6L15 27.8 6 19l12.5-1.5z"/></svg>Populaires</button>
+      <button type="button" class="ri"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12h24l-3 30H15z"/><path d="M12 12l3-6h18l3 6"/></svg>Boissons</button>
+      <button type="button" class="ri"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 30h32v12H8zM12 30v-8h24v8M24 22v-8"/></svg>Desserts</button>
+      <button type="button" class="ri"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><rect x="6" y="14" width="36" height="22" rx="4"/><path d="M6 24h36"/></svg>Menus</button>
+    </nav>
+
+    <main class="main">
+      <h1 class="h2">Populaires</h1>
+      <div class="grid">
+        <button type="button" class="tile"><span class="art"><svg width="112" height="112" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#D9452B"/><g fill="#E9B44C" stroke="#B9831A" stroke-width="1.5"><rect x="14" y="26" width="22" height="9" rx="4.5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="22" height="9" rx="4.5" transform="rotate(-25 39 37)"/></g></svg></span><span class="tb"><b>La Classique</b><small>Penne, tomate basilic</small><span class="pr"><span>9,50 €</span><span class="add" aria-hidden="true">+</span></span></span></button>
+        <button type="button" class="tile"><span class="art"><svg width="112" height="112" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#5E9A3C"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#E9B44C" stroke-width="5" stroke-linecap="round"/><path d="M16 40c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#E9B44C" stroke-width="5" stroke-linecap="round"/></svg></span><span class="tb"><b>La Veggie</b><small>Spaghetti, pesto, légumes</small><span class="pr"><span>10,00 €</span><span class="add" aria-hidden="true">+</span></span></span></button>
+        <button type="button" class="tile"><span class="art"><svg width="112" height="112" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#8E2A1A"/><g fill="#B98A4E" stroke="#7C5522" stroke-width="1.5"><rect x="14" y="26" width="22" height="9" rx="4.5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="22" height="9" rx="4.5" transform="rotate(-25 39 37)"/></g><circle cx="42" cy="22" r="4" fill="#D9A25B"/></svg></span><span class="tb"><b>La Protéinée</b><small>Complètes, bolognaise, poulet</small><span class="pr"><span>13,00 €</span><span class="add" aria-hidden="true">+</span></span></span></button>
+        <a href="#standard-2-composer" class="tile" style="border-style:dashed;border-color:var(--ink)"><span class="art" style="background:#fff"><svg width="96" height="96" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="19"/><path d="M24 14v20M14 24h20"/></svg></span><span class="tb"><b>Composer mon assiette</b><small>Pâtes, sauce, garnitures, extras</small></span></a>
+      </div>
+    </main>
+  </div>
+
+  <section class="dock" aria-label="Ma commande">
+    <div class="dh"><span>Ma commande · 1 article</span><span style="font-size:24px;color:var(--muted)">Sur place</span></div>
+    <div class="dl">
+      <div class="ln"><span>Penne · Tomate basilic · Poulet grillé</span><b>11,00 €</b></div>
+    </div>
+    <div class="dt">
+      <div class="tot">Total<b>11,00 €</b></div>
+      <a class="bn x" href="#Main" style="margin-left:auto">Annuler</a>
+      <a class="bn p" href="#standard-3-paiement" style="flex:none;width:340px">Payer</a>
+    </div>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Terminal de paiement par carte ici</footer>
+</div>
+</section>
+<section class="screen" id="s-standard-2-composer" data-w="810" data-h="1440" data-title="Standard 3 · Composer son assiette" hidden>
+<style>
+#s-standard-2-composer *{box-sizing:border-box}
+#s-standard-2-composer a{text-decoration:none;color:inherit}
+#s-standard-2-composer h1,#s-standard-2-composer h2,#s-standard-2-composer h3,#s-standard-2-composer p{margin:0}
+#s-standard-2-composer button{font:inherit;color:inherit}
+#s-standard-2-composer .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-standard-2-composer .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-standard-2-composer .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-standard-2-composer .tools{display:flex;gap:12px}
+#s-standard-2-composer .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-standard-2-composer .crumbs{height:72px;flex:none;background:#fff;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;font-size:24px;font-weight:800;color:var(--muted)}
+#s-standard-2-composer .crumbs .on{color:#fff;background:var(--red);padding:8px 22px;border-radius:24px}
+#s-standard-2-composer .mid{flex:1;min-height:0;display:flex}
+#s-standard-2-composer .rail{width:196px;flex:none;background:#fff;border-right:2px solid var(--line);display:flex;flex-direction:column}
+#s-standard-2-composer .ri{flex:none;height:144px;border:0;border-bottom:2px solid var(--line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:22px;font-weight:800;text-align:center;padding:0 8px;cursor:pointer}
+#s-standard-2-composer .ri i{font-style:normal;width:52px;height:52px;border-radius:50%;border:3px solid currentColor;display:grid;place-items:center;font-size:28px}
+#s-standard-2-composer .ri.on{background:var(--red);color:#fff}
+#s-standard-2-composer .main{flex:1;min-width:0;padding:22px;display:flex;flex-direction:column;gap:18px;overflow:hidden}
+#s-standard-2-composer .h2{font-size:38px;font-weight:800;letter-spacing:-.5px}
+#s-standard-2-composer .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+#s-standard-2-composer .tile{position:relative;height:300px;background:#fff;border:3px solid var(--line);border-radius:26px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;padding:0;text-align:left}
+#s-standard-2-composer .tile.sel{border-color:var(--red);box-shadow:0 0 0 3px var(--red)}
+#s-standard-2-composer .art{height:168px;flex:none;background:#FFF1D6;display:grid;place-items:center}
+#s-standard-2-composer .tb{flex:1;padding:12px 16px;display:flex;flex-direction:column;gap:2px}
+#s-standard-2-composer .tb b{font-size:28px;font-weight:800}
+#s-standard-2-composer .tb small{font-size:22px;color:var(--muted)}
+#s-standard-2-composer .ck{position:absolute;top:12px;right:12px;width:52px;height:52px;border-radius:50%;background:var(--red);display:grid;place-items:center}
+#s-standard-2-composer .dock{height:392px;flex:none;background:#fff;border-top:5px solid var(--ink);padding:16px 24px 20px;display:flex;flex-direction:column;gap:10px}
+#s-standard-2-composer .dh{display:flex;align-items:center;justify-content:space-between;font-size:28px;font-weight:800}
+#s-standard-2-composer .dl{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#s-standard-2-composer .ln{display:flex;align-items:center;gap:14px;height:54px;border-bottom:2px solid var(--line);font-size:24px;font-weight:700}
+#s-standard-2-composer .ln span{flex:1}
+#s-standard-2-composer .dt{display:flex;align-items:center;gap:16px}
+#s-standard-2-composer .tot{font-size:26px;font-weight:700;color:var(--muted);line-height:1.15}
+#s-standard-2-composer .tot b{display:block;font-size:44px;color:var(--ink);font-weight:800}
+#s-standard-2-composer .bn{height:100px;border-radius:20px;font-size:32px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:0 28px;cursor:pointer;border:4px solid var(--ink);background:#fff;color:var(--ink)}
+#s-standard-2-composer .bn.p{flex:1;background:var(--red);border-color:var(--red);color:#fff}
+#s-standard-2-composer .term{height:84px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:24px;font-weight:700}
+#s-standard-2-composer .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #57524C}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <a class="tl" href="#alexei-1-langue" aria-label="Changer de langue"><svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-9 10-9 26 0 36M24 6c9 10 9 26 0 36"/></svg>FR</a>
+      <button type="button" class="tl" aria-label="Accessibilité"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Aide" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <nav class="crumbs" aria-label="Étapes de la commande"><span class="on">1 Choisir</span>›<span>2 Commander</span>›<span>3 Payer</span></nav>
+
+  <div class="mid">
+    <nav class="rail" aria-label="Étapes de la composition">
+      <button type="button" class="ri on" aria-current="step"><i>1</i>Pâtes</button>
+      <button type="button" class="ri"><i>2</i>Sauce</button>
+      <button type="button" class="ri"><i>3</i>Garnitures</button>
+      <button type="button" class="ri"><i>4</i>Extras</button>
+    </nav>
+
+    <main class="main">
+      <h1 class="h2">Choisissez vos pâtes</h1>
+      <div class="grid">
+        <button type="button" class="tile sel" aria-pressed="true"><span class="ck" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 25l10 10 18-20"/></svg></span><span class="art"><svg width="120" height="120" viewBox="0 0 64 64" aria-hidden="true"><g fill="#E9B44C" stroke="#B9831A" stroke-width="2"><rect x="6" y="20" width="34" height="14" rx="7" transform="rotate(-25 23 27)"/><rect x="24" y="32" width="34" height="14" rx="7" transform="rotate(-25 41 39)"/></g></svg></span><span class="tb"><b>Penne</b><small>8,50 €</small></span></button>
+        <button type="button" class="tile" aria-pressed="false"><span class="art"><svg width="120" height="120" viewBox="0 0 64 64" fill="none" stroke="#E9B44C" stroke-width="4" stroke-linecap="round" aria-hidden="true"><path d="M8 18c8-8 12 8 20 0s12 8 20 0"/><path d="M8 32c8-8 12 8 20 0s12 8 20 0"/><path d="M8 46c8-8 12 8 20 0s12 8 20 0"/></svg></span><span class="tb"><b>Spaghetti</b><small>8,50 €</small></span></button>
+        <button type="button" class="tile" aria-pressed="false"><span class="art"><svg width="120" height="120" viewBox="0 0 64 64" fill="none" stroke="#E9B44C" stroke-width="9" stroke-linecap="round" aria-hidden="true"><path d="M10 20c8-6 12 6 20 0s12 6 20 0"/><path d="M10 38c8-6 12 6 20 0s12 6 20 0"/></svg></span><span class="tb"><b>Tagliatelle</b><small>9,00 €</small></span></button>
+        <button type="button" class="tile" aria-pressed="false"><span class="art"><svg width="120" height="120" viewBox="0 0 64 64" aria-hidden="true"><g fill="#B98A4E" stroke="#7C5522" stroke-width="2"><rect x="6" y="20" width="34" height="14" rx="7" transform="rotate(-25 23 27)"/><rect x="24" y="32" width="34" height="14" rx="7" transform="rotate(-25 41 39)"/></g></svg></span><span class="tb"><b>Complètes</b><small>9,00 €</small></span></button>
+      </div>
+    </main>
+  </div>
+
+  <section class="dock" aria-label="Mon assiette">
+    <div class="dh"><span>Mon assiette</span><span style="font-size:24px;color:var(--muted)">Étape 1 sur 4</span></div>
+    <div class="dl">
+      <div class="ln"><span>Pâtes · Penne</span><b>8,50 €</b></div>
+    </div>
+    <div class="dt">
+      <div class="tot">Assiette<b>8,50 €</b></div>
+      <a class="bn" href="#standard-menu" style="margin-left:auto">Retour</a>
+      <a class="bn p" href="#standard-2-composer" style="flex:none;width:340px">Étape suivante</a>
+    </div>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Terminal de paiement par carte ici</footer>
+</div>
+</section>
+<section class="screen" id="s-standard-3-paiement" data-w="810" data-h="1440" data-title="Standard 4 · Paiement" hidden>
+<style>
+#s-standard-3-paiement *{box-sizing:border-box}
+#s-standard-3-paiement a{text-decoration:none;color:inherit}
+#s-standard-3-paiement h1,#s-standard-3-paiement h2,#s-standard-3-paiement h3,#s-standard-3-paiement p{margin:0}
+#s-standard-3-paiement button{font:inherit;color:inherit}
+#s-standard-3-paiement .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-standard-3-paiement .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-standard-3-paiement .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-standard-3-paiement .tools{display:flex;gap:12px}
+#s-standard-3-paiement .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-standard-3-paiement .crumbs{height:72px;flex:none;background:#fff;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;font-size:24px;font-weight:800;color:var(--muted)}
+#s-standard-3-paiement .crumbs .on{color:#fff;background:var(--red);padding:8px 22px;border-radius:24px}
+#s-standard-3-paiement .crumbs .dn{color:var(--green)}
+#s-standard-3-paiement .main{flex:1;min-height:0;padding:22px 28px;display:flex;flex-direction:column;gap:18px;overflow:hidden}
+#s-standard-3-paiement .h2{font-size:36px;font-weight:800;letter-spacing:-.5px}
+#s-standard-3-paiement .card{background:#fff;border:3px solid var(--line);border-radius:26px}
+#s-standard-3-paiement .qb{width:72px;height:72px;border-radius:36px;border:4px solid var(--ink);background:#fff;font-size:42px;font-weight:800;cursor:pointer}
+#s-standard-3-paiement .mini{height:130px;background:#fff;border:3px solid var(--line);border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:26px;font-weight:800;cursor:pointer}
+#s-standard-3-paiement .mini small{font-size:22px;color:var(--muted);font-weight:700}
+#s-standard-3-paiement .pay{height:200px;background:#fff;border:3px solid var(--line);border-radius:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-size:28px;font-weight:800;cursor:pointer;text-align:center;padding:0 10px}
+#s-standard-3-paiement .pay.sel{border-color:var(--red);box-shadow:0 0 0 3px var(--red);background:var(--red-soft)}
+#s-standard-3-paiement .dock{height:232px;flex:none;background:#fff;border-top:5px solid var(--ink);padding:20px 28px;display:flex;align-items:center;gap:16px}
+#s-standard-3-paiement .tot{font-size:26px;font-weight:700;color:var(--muted);line-height:1.15}
+#s-standard-3-paiement .tot b{display:block;font-size:50px;color:var(--ink);font-weight:800}
+#s-standard-3-paiement .bn{height:110px;border-radius:20px;font-size:32px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:0 28px;cursor:pointer;border:4px solid var(--ink);background:#fff;color:var(--ink)}
+#s-standard-3-paiement .bn.p{background:var(--red);border-color:var(--red);color:#fff}
+#s-standard-3-paiement .term{height:84px;flex:none;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:26px;font-weight:800}
+#s-standard-3-paiement .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #fff}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <a class="tl" href="#alexei-1-langue" aria-label="Changer de langue"><svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-9 10-9 26 0 36M24 6c9 10 9 26 0 36"/></svg>FR</a>
+      <button type="button" class="tl" aria-label="Accessibilité"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Aide" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <nav class="crumbs" aria-label="Étapes de la commande"><span class="dn">✓ 1 Choisir</span>›<span class="dn">✓ 2 Commander</span>›<span class="on">3 Payer</span></nav>
+
+  <main class="main">
+    <h1 class="h2">Votre commande</h1>
+    <section class="card" style="display:flex;align-items:center;gap:22px;padding:20px 24px" aria-label="Article">
+      <svg width="100" height="100" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#D9452B"/><g fill="#E9B44C" stroke="#B9831A" stroke-width="1.5"><rect x="14" y="26" width="22" height="9" rx="4.5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="22" height="9" rx="4.5" transform="rotate(-25 39 37)"/></g></svg>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><h2 style="font-size:30px;font-weight:800">Penne · Tomate basilic</h2><p style="font-size:24px;color:var(--muted)">Poulet grillé</p><p style="font-size:28px;font-weight:800">11,00 €</p></div>
+      <div style="display:flex;align-items:center;gap:14px"><button type="button" class="qb" aria-label="Retirer une portion">−</button><span style="font-size:38px;font-weight:800;min-width:34px;text-align:center">1</span><button type="button" class="qb" aria-label="Ajouter une portion">+</button></div>
+    </section>
+
+    <section aria-label="Suggestion de boisson" style="display:flex;flex-direction:column;gap:12px">
+      <h2 class="h2" style="font-size:30px">Une boisson avec ça ?</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+        <button type="button" class="mini" aria-pressed="false">Eau<small>+1,50 €</small></button>
+        <button type="button" class="mini" aria-pressed="false">Limonade<small>+1,50 €</small></button>
+        <button type="button" class="mini" aria-pressed="false">Jus d'orange<small>+2,00 €</small></button>
+      </div>
+    </section>
+
+    <section aria-label="Moyen de paiement" style="display:flex;flex-direction:column;gap:12px">
+      <h2 class="h2" style="font-size:30px">Moyen de paiement</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+        <button type="button" class="pay sel" aria-pressed="true"><svg width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="38" height="26" rx="5"/><path d="M5 20h38"/></svg>Carte bancaire</button>
+        <button type="button" class="pay" aria-pressed="false"><svg width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" aria-hidden="true"><rect x="14" y="5" width="20" height="38" rx="5"/><path d="M21 38h6"/></svg>Paiement mobile</button>
+        <button type="button" class="pay" aria-pressed="false"><svg width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" aria-hidden="true"><rect x="4" y="12" width="40" height="24" rx="4"/><circle cx="24" cy="24" r="6"/></svg>Espèces au comptoir</button>
+      </div>
+    </section>
+  </main>
+
+  <section class="dock" aria-label="Total et paiement">
+    <div class="tot">Total à payer<b>11,00 €</b></div>
+    <a class="bn" href="#standard-menu" style="margin-left:auto">Retour</a>
+    <a class="bn p" href="#standard-3-paiement" style="width:340px">Payer</a>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Approchez votre carte du terminal ci-dessous</footer>
+</div>
+</section>
+<section class="screen" id="s-jeremy-1-accueil" data-w="810" data-h="1440" data-title="Jérémy 1 · Accueil reconnu" hidden>
+<style>
+#s-jeremy-1-accueil *{box-sizing:border-box}
+#s-jeremy-1-accueil a{text-decoration:none;color:inherit}
+#s-jeremy-1-accueil h1,#s-jeremy-1-accueil h2,#s-jeremy-1-accueil h3,#s-jeremy-1-accueil p{margin:0}
+#s-jeremy-1-accueil button{font:inherit;color:inherit}
+#s-jeremy-1-accueil .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-jeremy-1-accueil .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-jeremy-1-accueil .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-jeremy-1-accueil .tools{display:flex;gap:12px}
+#s-jeremy-1-accueil .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-jeremy-1-accueil .tl.ok{background:var(--green);border-color:var(--green)}
+#s-jeremy-1-accueil .crumbs{height:72px;flex:none;background:#fff;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;font-size:24px;font-weight:800;color:var(--muted)}
+#s-jeremy-1-accueil .crumbs .on{color:#fff;background:var(--red);padding:8px 22px;border-radius:24px}
+#s-jeremy-1-accueil .mid{flex:1;min-height:0;display:flex}
+#s-jeremy-1-accueil .rail{width:196px;flex:none;background:#fff;border-right:2px solid var(--line);display:flex;flex-direction:column}
+#s-jeremy-1-accueil .ri{flex:none;height:144px;border:0;border-bottom:2px solid var(--line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:22px;font-weight:800;text-align:center;padding:0 8px;cursor:pointer}
+#s-jeremy-1-accueil .ri.on{background:var(--red);color:#fff}
+#s-jeremy-1-accueil .main{flex:1;min-width:0;padding:22px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+#s-jeremy-1-accueil .h2{font-size:30px;font-weight:800;letter-spacing:-.5px}
+#s-jeremy-1-accueil .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+#s-jeremy-1-accueil .tile{height:236px;background:#fff;border:3px solid var(--line);border-radius:26px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;padding:0;text-align:left}
+#s-jeremy-1-accueil .art{height:70px;flex:none;background:#FFF1D6;display:grid;place-items:center}
+#s-jeremy-1-accueil .tb{flex:1;padding:10px 16px;display:flex;flex-direction:column;gap:2px}
+#s-jeremy-1-accueil .tb b{font-size:26px;font-weight:800}
+#s-jeremy-1-accueil .tb small{font-size:20px;color:var(--muted);line-height:1.25}
+#s-jeremy-1-accueil .pr{margin-top:auto;display:flex;align-items:center;justify-content:space-between;font-size:26px;font-weight:800}
+#s-jeremy-1-accueil .add{width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:34px;font-weight:800}
+#s-jeremy-1-accueil .dock{height:392px;flex:none;background:#fff;border-top:5px solid var(--ink);padding:16px 24px 20px;display:flex;flex-direction:column;gap:10px}
+#s-jeremy-1-accueil .dh{display:flex;align-items:center;justify-content:space-between;font-size:28px;font-weight:800}
+#s-jeremy-1-accueil .dl{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#s-jeremy-1-accueil .ln{display:flex;align-items:center;gap:14px;height:54px;border-bottom:2px solid var(--line);font-size:24px;font-weight:700}
+#s-jeremy-1-accueil .ln span{flex:1}
+#s-jeremy-1-accueil .dt{display:flex;align-items:center;gap:16px}
+#s-jeremy-1-accueil .tot{font-size:26px;font-weight:700;color:var(--muted);line-height:1.15}
+#s-jeremy-1-accueil .tot b{display:block;font-size:44px;color:var(--ink);font-weight:800}
+#s-jeremy-1-accueil .bn{height:100px;border-radius:20px;font-size:32px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:0 28px;cursor:pointer;border:4px solid var(--ink);background:#fff;color:var(--ink)}
+#s-jeremy-1-accueil .bn.p{background:var(--red);border-color:var(--red);color:#fff}
+#s-jeremy-1-accueil .bn.x{border-color:var(--red);color:var(--red)}
+#s-jeremy-1-accueil .term{height:84px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:24px;font-weight:700}
+#s-jeremy-1-accueil .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #57524C}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <span class="tl ok"><svg width="30" height="30" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 25l10 10 18-20"/></svg>Jérémy M.</span>
+      <button type="button" class="tl" aria-label="Accessibilité"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Aide" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <nav class="crumbs" aria-label="Étapes de la commande"><span class="on">1 Choisir</span>›<span>2 Commander</span>›<span>3 Payer</span></nav>
+
+  <div class="mid">
+    <nav class="rail" aria-label="Catégories">
+      <button type="button" class="ri on" aria-current="true"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M24 41S6 30 6 18a9 9 0 0 1 18-3 9 9 0 0 1 18 3c0 12-18 23-18 23z"/></svg>Mes favoris</button>
+      <button type="button" class="ri"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" aria-hidden="true"><path d="M24 6l5.5 11.5L42 19l-9 8.8L35.2 41 24 35l-11.2 6L15 27.8 6 19l12.5-1.5z"/></svg>Populaires</button>
+      <a class="ri" href="#standard-2-composer"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="17"/><path d="M24 15v18M15 24h18"/></svg>Composer</a>
+      <button type="button" class="ri"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12h24l-3 30H15z"/><path d="M12 12l3-6h18l3 6"/></svg>Boissons</button>
+      <button type="button" class="ri"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 30h32v12H8zM12 30v-8h24v8M24 22v-8"/></svg>Desserts</button>
+    </nav>
+
+    <main class="main">
+      <h1 style="font-size:40px;font-weight:800;letter-spacing:-1px">Bonjour Jérémy, comme d'habitude ?</h1>
+      <section style="height:300px;flex:none;background:var(--red-soft);border:5px solid var(--red);border-radius:30px;padding:24px;display:flex;flex-direction:column;gap:16px" aria-label="Votre habituelle">
+        <div style="display:flex;align-items:center;gap:22px">
+          <svg width="130" height="130" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#8E2A1A"/><g fill="#E9B44C" stroke="#B9831A" stroke-width="1.5"><rect x="14" y="26" width="22" height="9" rx="4.5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="22" height="9" rx="4.5" transform="rotate(-25 39 37)"/></g><circle cx="40" cy="22" r="2.5" fill="#fff"/><circle cx="24" cy="44" r="2.5" fill="#fff"/></svg>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:22px;font-weight:800;color:var(--red);background:#fff;padding:4px 16px;border-radius:20px;align-self:flex-start">Votre habituelle</span>
+            <h2 style="font-size:40px;line-height:1.05;font-weight:800">Penne bolognaise</h2>
+            <p style="font-size:24px;color:var(--muted)">Parmesan · Sur place</p>
+            <p style="font-size:40px;font-weight:800">10,00 €</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px;margin-top:auto">
+          <a href="#jeremy-2-paiement" class="bn p" style="flex:1;height:96px">Commander en 1 touche</a>
+          <a href="#standard-2-composer" class="bn" style="height:96px;width:200px">Modifier</a>
+        </div>
+      </section>
+      <h2 class="h2">Les plus populaires</h2>
+      <div class="grid">
+        <button type="button" class="tile"><span class="art"><svg width="58" height="58" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#D9452B"/><g fill="#E9B44C" stroke="#B9831A" stroke-width="1.5"><rect x="14" y="26" width="22" height="9" rx="4.5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="22" height="9" rx="4.5" transform="rotate(-25 39 37)"/></g></svg></span><span class="tb"><b>La Classique</b><small>Penne, tomate basilic</small><span class="pr"><span>9,50 €</span><span class="add" aria-hidden="true">+</span></span></span></button>
+        <button type="button" class="tile"><span class="art"><svg width="58" height="58" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#8E2A1A"/><g fill="#B98A4E" stroke="#7C5522" stroke-width="1.5"><rect x="14" y="26" width="22" height="9" rx="4.5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="22" height="9" rx="4.5" transform="rotate(-25 39 37)"/></g></svg></span><span class="tb"><b>La Protéinée</b><small>Complètes, bolognaise, poulet</small><span class="pr"><span>13,00 €</span><span class="add" aria-hidden="true">+</span></span></span></button>
+      </div>
+    </main>
+  </div>
+
+  <section class="dock" aria-label="Ma commande">
+    <div class="dh"><span>Ma commande · 1 article</span><span style="font-size:24px;color:var(--muted)">Sur place</span></div>
+    <div class="dl">
+      <div class="ln"><span>Penne bolognaise · Parmesan</span><b>10,00 €</b></div>
+    </div>
+    <div class="dt">
+      <div class="tot">Total<b>10,00 €</b></div>
+      <a class="bn x" href="#Main" style="margin-left:auto">Annuler</a>
+      <a class="bn p" href="#jeremy-2-paiement" style="width:340px">Payer</a>
+    </div>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Terminal de paiement par carte ici</footer>
+</div>
+</section>
+<section class="screen" id="s-jeremy-2-paiement" data-w="810" data-h="1440" data-title="Jérémy 2 · Paiement express" hidden>
+<style>
+#s-jeremy-2-paiement *{box-sizing:border-box}
+#s-jeremy-2-paiement a{text-decoration:none;color:inherit}
+#s-jeremy-2-paiement h1,#s-jeremy-2-paiement h2,#s-jeremy-2-paiement h3,#s-jeremy-2-paiement p{margin:0}
+#s-jeremy-2-paiement button{font:inherit;color:inherit}
+#s-jeremy-2-paiement .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-jeremy-2-paiement .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-jeremy-2-paiement .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-jeremy-2-paiement .tools{display:flex;gap:12px}
+#s-jeremy-2-paiement .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-jeremy-2-paiement .tl.ok{background:var(--green);border-color:var(--green)}
+#s-jeremy-2-paiement .crumbs{height:72px;flex:none;background:#fff;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;font-size:24px;font-weight:800;color:var(--muted)}
+#s-jeremy-2-paiement .crumbs .on{color:#fff;background:var(--red);padding:8px 22px;border-radius:24px}
+#s-jeremy-2-paiement .crumbs .dn{color:var(--green)}
+#s-jeremy-2-paiement .main{flex:1;min-height:0;padding:22px 28px;display:flex;flex-direction:column;gap:18px;overflow:hidden}
+#s-jeremy-2-paiement .h2{font-size:36px;font-weight:800;letter-spacing:-.5px}
+#s-jeremy-2-paiement .card{background:#fff;border:3px solid var(--line);border-radius:26px}
+#s-jeremy-2-paiement .dock{height:232px;flex:none;background:#fff;border-top:5px solid var(--ink);padding:20px 28px;display:flex;align-items:center;gap:16px}
+#s-jeremy-2-paiement .tot{font-size:26px;font-weight:700;color:var(--muted);line-height:1.15}
+#s-jeremy-2-paiement .tot b{display:block;font-size:50px;color:var(--ink);font-weight:800}
+#s-jeremy-2-paiement .bn{height:110px;border-radius:20px;font-size:32px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:0 28px;cursor:pointer;border:4px solid var(--ink);background:#fff;color:var(--ink)}
+#s-jeremy-2-paiement .bn.p{background:var(--red);border-color:var(--red);color:#fff}
+#s-jeremy-2-paiement .term{height:84px;flex:none;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:26px;font-weight:800}
+#s-jeremy-2-paiement .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #fff}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <span class="tl ok"><svg width="30" height="30" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 25l10 10 18-20"/></svg>Jérémy M.</span>
+      <button type="button" class="tl" aria-label="Accessibilité"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Aide" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <nav class="crumbs" aria-label="Étapes de la commande"><span class="dn">✓ 1 Choisir</span>›<span class="dn">✓ 2 Commander</span>›<span class="on">3 Payer</span></nav>
+
+  <main class="main">
+    <h1 class="h2">Votre commande</h1>
+    <section class="card" style="display:flex;align-items:center;gap:22px;padding:20px 24px" aria-label="Article">
+      <svg width="100" height="100" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#8E2A1A"/><g fill="#E9B44C" stroke="#B9831A" stroke-width="1.5"><rect x="14" y="26" width="22" height="9" rx="4.5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="22" height="9" rx="4.5" transform="rotate(-25 39 37)"/></g></svg>
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px"><h2 style="font-size:30px;font-weight:800">Penne bolognaise</h2><p style="font-size:24px;color:var(--muted)">Parmesan · Sur place</p></div>
+      <b style="font-size:34px">10,00 €</b>
+    </section>
+
+    <button type="button" class="card" aria-pressed="false" style="display:flex;align-items:center;gap:22px;padding:0 24px;height:120px;cursor:pointer;text-align:left;font:inherit">
+      <svg width="60" height="60" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 12h22l-3 28H16z"/><path d="M13 12l3-6h16l3 6"/></svg>
+      <span style="flex:1;font-size:30px;font-weight:800">Une boisson avec ça ? <span style="color:var(--muted);font-weight:600">+1,50 €</span></span>
+      <span style="width:72px;height:72px;border-radius:36px;border:4px solid var(--ink);display:grid;place-items:center;font-size:44px;font-weight:800" aria-hidden="true">+</span>
+    </button>
+
+    <h2 class="h2" style="font-size:30px">Moyen de paiement</h2>
+    <button type="button" class="card" aria-pressed="true" style="display:flex;align-items:center;gap:22px;padding:0 24px;height:150px;cursor:pointer;text-align:left;font:inherit;border-color:var(--red);box-shadow:0 0 0 3px var(--red);background:var(--red-soft)">
+      <svg width="68" height="68" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="38" height="26" rx="5"/><path d="M5 20h38"/></svg>
+      <span style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font-size:32px;font-weight:800">Carte •••• 4242</span><span style="font-size:24px;color:var(--muted)">Enregistrée dans votre compte</span></span>
+      <svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="#C8321B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 25l10 10 18-20"/></svg>
+    </button>
+    <a href="#standard-3-paiement" style="font-size:26px;font-weight:800;text-decoration:underline;padding:10px 0;align-self:flex-start">Autre moyen de paiement</a>
+  </main>
+
+  <section class="dock" aria-label="Total et paiement">
+    <div class="tot">Total à payer<b>10,00 €</b></div>
+    <a class="bn" href="#jeremy-1-accueil" style="margin-left:auto">Retour</a>
+    <a class="bn p" href="#jeremy-2-paiement" style="width:340px">Payer</a>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Approchez votre carte du terminal ci-dessous</footer>
+</div>
+</section>
+<section class="screen" id="s-alexei-1-langue" data-w="810" data-h="1440" data-title="Alexovitch 1 · Choix de la langue" hidden>
+<style>
+#s-alexei-1-langue *{box-sizing:border-box}
+#s-alexei-1-langue a{text-decoration:none;color:inherit}
+#s-alexei-1-langue h1,#s-alexei-1-langue h2,#s-alexei-1-langue h3,#s-alexei-1-langue p{margin:0}
+#s-alexei-1-langue button{font:inherit;color:inherit}
+#s-alexei-1-langue .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-alexei-1-langue .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-alexei-1-langue .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-alexei-1-langue .tools{display:flex;gap:12px}
+#s-alexei-1-langue .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-alexei-1-langue .crumbs{height:72px;flex:none;background:#fff;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;font-size:24px;font-weight:800;color:var(--muted)}
+#s-alexei-1-langue .crumbs .on{color:#fff;background:var(--red);padding:8px 22px;border-radius:24px}
+#s-alexei-1-langue .main{flex:1;min-height:0;padding:24px 28px;display:flex;flex-direction:column;gap:20px;overflow:hidden}
+#s-alexei-1-langue .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+#s-alexei-1-langue .lg{position:relative;height:172px;background:#fff;border:3px solid var(--line);border-radius:26px;display:flex;align-items:center;gap:20px;padding:0 24px;cursor:pointer;text-align:left}
+#s-alexei-1-langue .lg i{font-style:normal;width:84px;height:84px;border-radius:22px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:30px;font-weight:800}
+#s-alexei-1-langue .lg span{flex:1;font-size:36px;font-weight:800}
+#s-alexei-1-langue .lg.sel{border-color:var(--red);box-shadow:0 0 0 3px var(--red);background:var(--red-soft)}
+#s-alexei-1-langue .lg.sel i{background:var(--red)}
+#s-alexei-1-langue .dock{height:232px;flex:none;background:#fff;border-top:5px solid var(--ink);padding:20px 28px;display:flex;align-items:center;gap:16px}
+#s-alexei-1-langue .bn{height:110px;border-radius:20px;font-size:34px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:0 28px;cursor:pointer;border:4px solid var(--ink);background:#fff;color:var(--ink)}
+#s-alexei-1-langue .bn.p{flex:1;background:var(--red);border-color:var(--red);color:#fff}
+#s-alexei-1-langue .term{height:84px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:24px;font-weight:700}
+#s-alexei-1-langue .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #57524C}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <span class="tl" style="border-color:var(--red)"><svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-9 10-9 26 0 36M24 6c9 10 9 26 0 36"/></svg>RU</span>
+      <button type="button" class="tl" aria-label="Специальные возможности"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Помощь" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <nav class="crumbs" aria-label="Этапы заказа"><span class="on">1 Выбор</span>›<span>2 Заказ</span>›<span>3 Оплата</span></nav>
+
+  <main class="main">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <h1 style="font-size:58px;line-height:1.05;font-weight:800;letter-spacing:-1.5px">Выберите язык</h1>
+      <p style="font-size:26px;color:var(--muted)">Choose your language · Choisissez votre langue</p>
+    </div>
+    <div class="grid" role="group" aria-label="Языки">
+      <button type="button" class="lg" aria-pressed="false"><i>FR</i><span>Français</span></button>
+      <button type="button" class="lg" aria-pressed="false"><i>EN</i><span>English</span></button>
+      <button type="button" class="lg sel" aria-pressed="true"><i>RU</i><span>Русский</span><svg width="46" height="46" viewBox="0 0 48 48" fill="none" stroke="#C8321B" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 25l10 10 18-20"/></svg></button>
+      <button type="button" class="lg" aria-pressed="false"><i>ES</i><span>Español</span></button>
+      <button type="button" class="lg" aria-pressed="false"><i>DE</i><span>Deutsch</span></button>
+      <button type="button" class="lg" aria-pressed="false"><i>IT</i><span>Italiano</span></button>
+      <button type="button" class="lg" aria-pressed="false"><i>ZH</i><span>中文</span></button>
+      <button type="button" class="lg" aria-pressed="false"><i>PT</i><span>Português</span></button>
+    </div>
+  </main>
+
+  <section class="dock" aria-label="Действия">
+    <a class="bn" href="#Main" style="width:260px">Назад</a>
+    <a class="bn p" href="#alexei-2-concept">Продолжить</a>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Терминал оплаты картой здесь</footer>
+</div>
+</section>
+<section class="screen" id="s-alexei-2-concept" data-w="810" data-h="1440" data-title="Alexovitch 2 · Découvrir le concept" hidden>
+<style>
+#s-alexei-2-concept *{box-sizing:border-box}
+#s-alexei-2-concept a{text-decoration:none;color:inherit}
+#s-alexei-2-concept h1,#s-alexei-2-concept h2,#s-alexei-2-concept h3,#s-alexei-2-concept p{margin:0}
+#s-alexei-2-concept button{font:inherit;color:inherit}
+#s-alexei-2-concept .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-alexei-2-concept .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-alexei-2-concept .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-alexei-2-concept .tools{display:flex;gap:12px}
+#s-alexei-2-concept .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-alexei-2-concept .how{background:#fff;border:3px solid var(--line);border-radius:26px;padding:22px 18px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+#s-alexei-2-concept .how b{width:64px;height:64px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:34px;font-weight:800}
+#s-alexei-2-concept .how h2{font-size:28px;line-height:1.15;font-weight:800}
+#s-alexei-2-concept .how p{font-size:22px;line-height:1.3;color:var(--muted)}
+#s-alexei-2-concept .dock{height:232px;flex:none;background:#fff;border-top:5px solid var(--ink);padding:20px 28px;display:flex;align-items:center;gap:16px}
+#s-alexei-2-concept .bn{height:110px;border-radius:20px;font-size:34px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:0 28px;cursor:pointer;border:4px solid var(--ink);background:#fff;color:var(--ink)}
+#s-alexei-2-concept .bn.p{flex:1;background:var(--red);border-color:var(--red);color:#fff}
+#s-alexei-2-concept .term{height:84px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:24px;font-weight:700}
+#s-alexei-2-concept .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #57524C}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <a class="tl" href="#alexei-1-langue" aria-label="Изменить язык"><svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-9 10-9 26 0 36M24 6c9 10 9 26 0 36"/></svg>RU</a>
+      <button type="button" class="tl" aria-label="Специальные возможности"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Помощь" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <section style="height:420px;flex:none;background:var(--red);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:0 40px" aria-label="Добро пожаловать">
+    <svg width="210" height="210" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#fff"/><circle cx="32" cy="32" r="23" fill="#8E2A1A"/><g fill="#B98A4E" stroke="#7C5522" stroke-width="1.2"><rect x="13" y="25" width="24" height="10" rx="5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="24" height="10" rx="5" transform="rotate(-25 40 38)"/><rect x="20" y="17" width="22" height="9" rx="4.5" transform="rotate(15 31 21)"/></g><circle cx="46" cy="20" r="3" fill="#D9A25B"/><circle cx="20" cy="46" r="3" fill="#D9A25B"/></svg>
+    <h1 style="font-size:58px;line-height:1.05;font-weight:800;letter-spacing:-1.5px">Добро пожаловать в PastaLaVista</h1>
+    <p style="font-size:30px;font-weight:600">Свежая паста, собранная именно для вас</p>
+  </section>
+
+  <main style="flex:1;min-height:0;padding:22px 28px;display:flex;flex-direction:column;gap:18px;overflow:hidden">
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px">
+      <section class="how" aria-label="Шаг 1"><b>1</b>
+        <svg width="90" height="90" viewBox="0 0 64 64" aria-hidden="true"><g fill="#B98A4E" stroke="#7C5522" stroke-width="2"><rect x="6" y="20" width="34" height="14" rx="7" transform="rotate(-25 23 27)"/><rect x="24" y="32" width="34" height="14" rx="7" transform="rotate(-25 41 39)"/></g></svg>
+        <h2>Выберите пасту</h2><p>Классическая или цельнозерновая (медленные углеводы)</p></section>
+      <section class="how" aria-label="Шаг 2"><b>2</b>
+        <svg width="90" height="90" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="20" fill="#8E2A1A"/><path d="M18 36c0-10 8-16 18-14 6 2 9 8 8 14-1 6-8 8-14 8s-12-2-12-8z" fill="#D9A25B" stroke="#A46A25" stroke-width="2"/></svg>
+        <h2>Добавьте соус и белок</h2><p>Курица, тунец, яйцо. Порция — на ваш выбор</p></section>
+      <section class="how" aria-label="Шаг 3"><b>3</b>
+        <svg width="90" height="90" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="38" height="26" rx="5"/><path d="M5 20h38"/></svg>
+        <h2>Оплатите — и приятного аппетита</h2><p>Мы подскажем, где оплатить</p></section>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px;background:var(--green-soft);border:3px solid var(--green);border-radius:22px;padding:16px 22px">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="#1F6B43" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M24 22v12M24 15v2"/></svg>
+      <p style="font-size:26px;line-height:1.3;font-weight:800;color:var(--green)">Для каждого блюда мы показываем калории и белки.</p>
+    </div>
+  </main>
+
+  <section class="dock" aria-label="Действия">
+    <a class="bn" href="#alexei-1-langue" style="width:260px">Назад</a>
+    <a class="bn p" href="#alexei-3-composer">Начать</a>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Терминал оплаты картой здесь</footer>
+</div>
+</section>
+<section class="screen" id="s-alexei-3-composer" data-w="810" data-h="1440" data-title="Alexovitch 3 · Composition guidée" hidden>
+<style>
+#s-alexei-3-composer *{box-sizing:border-box}
+#s-alexei-3-composer a{text-decoration:none;color:inherit}
+#s-alexei-3-composer h1,#s-alexei-3-composer h2,#s-alexei-3-composer h3,#s-alexei-3-composer p{margin:0}
+#s-alexei-3-composer button{font:inherit;color:inherit}
+#s-alexei-3-composer .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-alexei-3-composer .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-alexei-3-composer .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-alexei-3-composer .tools{display:flex;gap:12px}
+#s-alexei-3-composer .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-alexei-3-composer .crumbs{height:72px;flex:none;background:#fff;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;font-size:24px;font-weight:800;color:var(--muted)}
+#s-alexei-3-composer .crumbs .on{color:#fff;background:var(--red);padding:8px 22px;border-radius:24px}
+#s-alexei-3-composer .mid{flex:1;min-height:0;display:flex}
+#s-alexei-3-composer .rail{width:196px;flex:none;background:#fff;border-right:2px solid var(--line);display:flex;flex-direction:column}
+#s-alexei-3-composer .ri{flex:none;height:144px;border:0;border-bottom:2px solid var(--line);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:23px;font-weight:800;text-align:center;padding:0 8px;cursor:pointer}
+#s-alexei-3-composer .ri i{font-style:normal;width:52px;height:52px;border-radius:50%;border:3px solid currentColor;display:grid;place-items:center;font-size:28px}
+#s-alexei-3-composer .ri.on{background:var(--red);color:#fff}
+#s-alexei-3-composer .ri.dn{color:var(--green)}
+#s-alexei-3-composer .ri.dn i{background:var(--green);border-color:var(--green);color:#fff}
+#s-alexei-3-composer .main{flex:1;min-width:0;padding:20px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+#s-alexei-3-composer .pr{display:flex;align-items:center;gap:14px;height:150px;background:#fff;border:3px solid var(--line);border-radius:24px;padding:0 16px}
+#s-alexei-3-composer .pr.sel{border-color:var(--red);box-shadow:0 0 0 3px var(--red);background:var(--red-soft)}
+#s-alexei-3-composer .pr .tx{flex:1;display:flex;flex-direction:column;gap:2px}
+#s-alexei-3-composer .pr h2{font-size:26px;font-weight:800}
+#s-alexei-3-composer .pr p{font-size:20px;line-height:1.2;color:var(--muted)}
+#s-alexei-3-composer .pr .nu{font-size:20px;font-weight:800;color:var(--green)}
+#s-alexei-3-composer .qty{display:flex;align-items:center;gap:8px}
+#s-alexei-3-composer .qb{width:62px;height:62px;border-radius:31px;border:4px solid var(--ink);background:#fff;font-size:36px;font-weight:800;cursor:pointer}
+#s-alexei-3-composer .qty span{min-width:28px;text-align:center;font-size:32px;font-weight:800}
+#s-alexei-3-composer .dock{height:392px;flex:none;background:#fff;border-top:5px solid var(--ink);padding:16px 24px 20px;display:flex;flex-direction:column;gap:10px}
+#s-alexei-3-composer .dh{display:flex;align-items:center;justify-content:space-between;font-size:28px;font-weight:800}
+#s-alexei-3-composer .dl{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#s-alexei-3-composer .ln{display:flex;align-items:center;gap:14px;height:54px;border-bottom:2px solid var(--line);font-size:24px;font-weight:700}
+#s-alexei-3-composer .ln span{flex:1}
+#s-alexei-3-composer .dt{display:flex;align-items:center;gap:16px}
+#s-alexei-3-composer .tot{font-size:26px;font-weight:700;color:var(--muted);line-height:1.15}
+#s-alexei-3-composer .tot b{display:block;font-size:44px;color:var(--ink);font-weight:800}
+#s-alexei-3-composer .bn{height:100px;border-radius:20px;font-size:32px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:0 28px;cursor:pointer;border:4px solid var(--ink);background:#fff;color:var(--ink)}
+#s-alexei-3-composer .bn.p{background:var(--red);border-color:var(--red);color:#fff}
+#s-alexei-3-composer .term{height:84px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:24px;font-weight:700}
+#s-alexei-3-composer .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #57524C}
+#s-alexei-3-composer .hb{height:76px;border-radius:18px;font-size:23px;font-weight:800;padding:0 16px;cursor:pointer}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <a class="tl" href="#alexei-1-langue" aria-label="Изменить язык"><svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-9 10-9 26 0 36M24 6c9 10 9 26 0 36"/></svg>RU</a>
+      <button type="button" class="tl" aria-label="Специальные возможности"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Помощь" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <nav class="crumbs" aria-label="Этапы заказа"><span class="on">1 Выбор</span>›<span>2 Заказ</span>›<span>3 Оплата</span></nav>
+
+  <div class="mid">
+    <nav class="rail" aria-label="Шаги составления блюда">
+      <button type="button" class="ri dn"><i>✓</i>Паста</button>
+      <button type="button" class="ri dn"><i>✓</i>Соус</button>
+      <button type="button" class="ri on" aria-current="step"><i>3</i>Белок</button>
+      <button type="button" class="ri"><i>4</i>Добавки</button>
+      <button type="button" class="ri"><i>5</i>Проверка</button>
+    </nav>
+
+    <main class="main">
+      <div>
+        <h1 style="font-size:40px;font-weight:800;letter-spacing:-1px">Выберите белок</h1>
+        <p style="font-size:22px;color:var(--muted);margin-top:2px">Можно взять несколько порций</p>
+      </div>
+      <section class="pr sel" aria-label="Курица на гриле, 2 порции">
+        <svg width="76" height="76" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><path d="M18 36c0-10 8-16 18-14 6 2 9 8 8 14-1 6-8 8-14 8s-12-2-12-8z" fill="#D9A25B" stroke="#A46A25" stroke-width="2"/></svg>
+        <div class="tx"><h2>Курица на гриле</h2><p>Куриная грудка · +2,50 €</p><span class="nu">165 ккал · 31 г белка</span></div>
+        <div class="qty"><button type="button" class="qb" aria-label="Убрать порцию">−</button><span>2</span><button type="button" class="qb" aria-label="Добавить порцию">+</button></div>
+      </section>
+      <section class="pr" aria-label="Тунец">
+        <svg width="76" height="76" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><path d="M14 32c8-12 24-12 34 0-10 12-26 12-34 0z" fill="#E7A9A0" stroke="#B5675D" stroke-width="2"/><circle cx="22" cy="30" r="2" fill="#1C1B1A"/></svg>
+        <div class="tx"><h2>Тунец</h2><p>В собственном соку · +2,00 €</p><span class="nu">110 ккал · 24 г белка</span></div>
+        <div class="qty"><button type="button" class="qb" aria-label="Убрать порцию">−</button><span>0</span><button type="button" class="qb" aria-label="Добавить порцию">+</button></div>
+      </section>
+      <section class="pr" aria-label="Яйцо вкрутую">
+        <svg width="76" height="76" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><ellipse cx="32" cy="32" rx="14" ry="18" fill="#fff" stroke="#A8A29A" stroke-width="2"/><circle cx="32" cy="34" r="7" fill="#E9B44C"/></svg>
+        <div class="tx"><h2>Яйцо вкрутую</h2><p>Одно яйцо · +1,00 €</p><span class="nu">78 ккал · 6 г белка</span></div>
+        <div class="qty"><button type="button" class="qb" aria-label="Убрать порцию">−</button><span>0</span><button type="button" class="qb" aria-label="Добавить порцию">+</button></div>
+      </section>
+
+      <section style="border:3px solid var(--green);background:var(--green-soft);border-radius:22px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;margin-top:auto" aria-label="Предложение помощи">
+        <div style="display:flex;align-items:center;gap:12px"><svg width="40" height="40" viewBox="0 0 48 48" fill="none" stroke="#1F6B43" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M19 19a5 5 0 1 1 7 4.5c-1.5.8-2 1.8-2 3.5M24 33v1"/></svg><h2 style="font-size:28px;font-weight:800;color:var(--green)">Нужна помощь?</h2></div>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="hb" style="flex:1;background:var(--green);color:#fff;border:0">Да, подсказки</button>
+          <button type="button" class="hb" style="flex:1;background:#fff;color:var(--ink);border:3px solid var(--ink)">Позвать сотрудника</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <section class="dock" aria-label="Моё блюдо">
+    <div class="dh"><span>Моё блюдо</span><span style="font-size:24px;color:var(--green)">1 300 ккал · 104 г белка</span></div>
+    <div class="dl">
+      <div class="ln"><span>Спагетти цельнозерновые XL</span><b>11,00 €</b></div>
+      <div class="ln"><span>Соус болоньезе</span><b>1,00 €</b></div>
+      <div class="ln"><span>Курица на гриле × 2</span><b>5,00 €</b></div>
+    </div>
+    <div class="dt">
+      <div class="tot">Итого<b>17,00 €</b></div>
+      <a class="bn" href="#alexei-2-concept" style="margin-left:auto">Назад</a>
+      <a class="bn p" href="#alexei-4-paiement" style="width:320px">Далее</a>
+    </div>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Терминал оплаты картой здесь</footer>
+</div>
+</section>
+<section class="screen" id="s-alexei-4-paiement" data-w="810" data-h="1440" data-title="Alexovitch 4 · Récapitulatif et où payer" hidden>
+<style>
+#s-alexei-4-paiement *{box-sizing:border-box}
+#s-alexei-4-paiement a{text-decoration:none;color:inherit}
+#s-alexei-4-paiement h1,#s-alexei-4-paiement h2,#s-alexei-4-paiement h3,#s-alexei-4-paiement p{margin:0}
+#s-alexei-4-paiement button{font:inherit;color:inherit}
+#s-alexei-4-paiement .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-alexei-4-paiement .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-alexei-4-paiement .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-alexei-4-paiement .tools{display:flex;gap:12px}
+#s-alexei-4-paiement .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-alexei-4-paiement .crumbs{height:72px;flex:none;background:#fff;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;font-size:24px;font-weight:800;color:var(--muted)}
+#s-alexei-4-paiement .crumbs .on{color:#fff;background:var(--red);padding:8px 22px;border-radius:24px}
+#s-alexei-4-paiement .crumbs .dn{color:var(--green)}
+#s-alexei-4-paiement .main{flex:1;min-height:0;padding:22px 28px;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+#s-alexei-4-paiement .card{background:#fff;border:3px solid var(--line);border-radius:26px}
+#s-alexei-4-paiement .opt{height:104px;background:#fff;border:3px solid var(--line);border-radius:22px;display:flex;align-items:center;gap:16px;padding:0 24px;font-size:30px;font-weight:800;cursor:pointer}
+#s-alexei-4-paiement .opt.sel{border-color:var(--red);box-shadow:0 0 0 3px var(--red);background:var(--red-soft)}
+#s-alexei-4-paiement .ln{display:flex;justify-content:space-between;align-items:center;height:60px;font-size:28px;font-weight:700;border-bottom:2px solid var(--line)}
+#s-alexei-4-paiement .ln:last-child{border-bottom:0}
+#s-alexei-4-paiement .gs{display:flex;align-items:center;gap:16px;font-size:26px;font-weight:700}
+#s-alexei-4-paiement .gs i{font-style:normal;flex:none;width:46px;height:46px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:26px;font-weight:800}
+#s-alexei-4-paiement .dock{height:232px;flex:none;background:#fff;border-top:5px solid var(--ink);padding:20px 28px;display:flex;align-items:center;gap:16px}
+#s-alexei-4-paiement .tot{font-size:26px;font-weight:700;color:var(--muted);line-height:1.15}
+#s-alexei-4-paiement .tot b{display:block;font-size:50px;color:var(--ink);font-weight:800}
+#s-alexei-4-paiement .bn{height:110px;border-radius:20px;font-size:32px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:0 28px;cursor:pointer;border:4px solid var(--ink);background:#fff;color:var(--ink)}
+#s-alexei-4-paiement .bn.p{background:var(--red);border-color:var(--red);color:#fff}
+#s-alexei-4-paiement .term{height:84px;flex:none;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:25px;font-weight:800}
+#s-alexei-4-paiement .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #fff}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <a class="tl" href="#alexei-1-langue" aria-label="Изменить язык"><svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-9 10-9 26 0 36M24 6c9 10 9 26 0 36"/></svg>RU</a>
+      <button type="button" class="tl" aria-label="Специальные возможности"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Помощь" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <nav class="crumbs" aria-label="Этапы заказа"><span class="dn">✓ 1 Выбор</span>›<span class="dn">✓ 2 Заказ</span>›<span class="on">3 Оплата</span></nav>
+
+  <main class="main">
+    <h1 style="font-size:42px;font-weight:800;letter-spacing:-1px">Ваш заказ</h1>
+
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px" role="group" aria-label="Где вы будете есть?">
+      <button type="button" class="opt sel" aria-pressed="true"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="16"/><circle cx="24" cy="24" r="8"/></svg>Здесь, в зале</button>
+      <button type="button" class="opt" aria-pressed="false"><svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 16h28l-2 26H12z"/><path d="M18 20v-5a6 6 0 0 1 12 0v5"/></svg>С собой</button>
+    </div>
+
+    <section class="card" style="padding:6px 24px" aria-label="Состав заказа">
+      <div class="ln"><span>Спагетти цельнозерновые, XL</span><b>11,00 €</b></div>
+      <div class="ln"><span>Соус болоньезе</span><b>1,00 €</b></div>
+      <div class="ln"><span>Курица на гриле × 2</span><b>5,00 €</b></div>
+      <div class="ln"><span>Яйцо вкрутую</span><b>1,00 €</b></div>
+    </section>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--green-soft);border:3px solid var(--green);border-radius:22px;padding:14px 24px">
+      <span style="font-size:24px;font-weight:700;color:var(--green)">Всего в блюде</span>
+      <span style="font-size:30px;font-weight:800;color:var(--green)">1 378 ккал · 110 г белка</span>
+    </div>
+
+    <section class="card" style="border:5px solid var(--green);padding:22px 24px;display:flex;flex-direction:column;gap:14px;margin-top:auto" aria-label="Где оплатить">
+      <div style="display:flex;align-items:center;gap:18px">
+        <svg width="76" height="76" viewBox="0 0 48 48" fill="none" stroke="#1F6B43" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 6v32M12 26l12 12 12-12"/></svg>
+        <h2 style="flex:1;font-size:34px;line-height:1.12;font-weight:800">Оплата — на терминале внизу, под экраном</h2>
+      </div>
+      <div class="gs"><i>1</i>Нажмите «Оплатить».</div>
+      <div class="gs"><i>2</i>Приложите карту к терминалу внизу.</div>
+      <div class="gs"><i>3</i>Возьмите чек с номером заказа.</div>
+    </section>
+  </main>
+
+  <section class="dock" aria-label="Итого и оплата">
+    <div class="tot">Итого<b>18,00 €</b></div>
+    <a class="bn" href="#alexei-3-composer" style="margin-left:auto">Назад</a>
+    <a class="bn p" href="#alexei-4-paiement" style="width:340px">Оплатить</a>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Приложите карту к терминалу здесь</footer>
+</div>
+</section>
+<section class="screen" id="s-phone-1-jeremy" data-w="390" data-h="844" data-title="Smartphone 1 · Jérémy prépare sa commande" hidden>
+<style>
+#s-phone-1-jeremy *{box-sizing:border-box}
+#s-phone-1-jeremy a{text-decoration:none;color:inherit}
+#s-phone-1-jeremy h1,#s-phone-1-jeremy h2,#s-phone-1-jeremy h3,#s-phone-1-jeremy p{margin:0}
+#s-phone-1-jeremy .p{width:390px;height:844px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-phone-1-jeremy .top{flex:none;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#fff;border-bottom:1px solid var(--line)}
+#s-phone-1-jeremy .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.3px}
+#s-phone-1-jeremy .me{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:22px;background:var(--green-soft);color:var(--green);font-size:15px;font-weight:800}
+#s-phone-1-jeremy .body{flex:1;min-height:0;overflow:hidden;padding:20px 20px 12px;display:flex;flex-direction:column;gap:16px}
+#s-phone-1-jeremy .card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px}
+#s-phone-1-jeremy .seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:6px}
+#s-phone-1-jeremy .seg button{font:inherit;font-size:16px;font-weight:800;height:48px;border-radius:12px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+#s-phone-1-jeremy .seg button.on{background:var(--ink);color:#fff}
+#s-phone-1-jeremy .bar{flex:none;padding:12px 20px 20px;background:#fff;border-top:1px solid var(--line)}
+#s-phone-1-jeremy .cta{display:flex;align-items:center;justify-content:center;height:56px;border-radius:16px;background:var(--red);color:#fff;font-size:18px;font-weight:800}
+#s-phone-1-jeremy .row{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%}
+</style>
+<div class="p">
+  <header class="top">
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <span class="me"><svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 25l10 10 18-20"/></svg>Jérémy</span>
+  </header>
+
+  <main class="body">
+    <div>
+      <h1 style="font-size:28px;line-height:1.15;font-weight:800;letter-spacing:-.5px">Bonjour Jérémy</h1>
+      <p style="font-size:16px;color:var(--muted);margin-top:4px">Préparez votre commande avant d'arriver.</p>
+    </div>
+
+    <div class="seg" role="group" aria-label="Mode de consommation">
+      <button type="button" class="on" aria-pressed="true">Sur place</button>
+      <button type="button" aria-pressed="false">À emporter</button>
+    </div>
+
+    <section class="card" style="border:2px solid var(--red);background:var(--red-soft);display:flex;flex-direction:column;gap:12px" aria-label="Votre habituelle">
+      <div style="display:flex;align-items:center;gap:14px">
+        <svg width="76" height="76" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#8E2A1A"/><g fill="#E9B44C" stroke="#B9831A" stroke-width="1.5"><rect x="14" y="26" width="22" height="9" rx="4.5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="22" height="9" rx="4.5" transform="rotate(-25 39 37)"/></g></svg>
+        <div style="flex:1">
+          <span style="font-size:13px;font-weight:800;background:#fff;color:var(--red);padding:3px 10px;border-radius:12px">Votre habituelle</span>
+          <h2 style="font-size:21px;font-weight:800;margin-top:6px">Penne bolognaise</h2>
+          <p style="font-size:15px;color:var(--muted)">Parmesan</p>
+        </div>
+        <span style="font-size:20px;font-weight:800">10,00 €</span>
+      </div>
+      <a href="#phone-2-jeremy-qr" class="cta">Valider cette commande</a>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:8px" aria-label="Les plus populaires">
+      <h2 style="font-size:17px;font-weight:800">Les plus populaires</h2>
+      <button type="button" class="row" aria-pressed="false"><span style="flex:1;font-size:16px;font-weight:800">La Classique<span style="display:block;font-size:14px;font-weight:500;color:var(--muted)">Penne, tomate basilic</span></span><b style="font-size:16px">9,50 €</b></button>
+      <button type="button" class="row" aria-pressed="false"><span style="flex:1;font-size:16px;font-weight:800">La Veggie<span style="display:block;font-size:14px;font-weight:500;color:var(--muted)">Spaghetti, pesto, légumes</span></span><b style="font-size:16px">10,00 €</b></button>
+      <button type="button" class="row" aria-pressed="false"><span style="flex:1;font-size:16px;font-weight:800">La Protéinée<span style="display:block;font-size:14px;font-weight:500;color:var(--muted)">Complètes, bolognaise, poulet</span></span><b style="font-size:16px">13,00 €</b></button>
+    </section>
+
+    <a href="#phone-1-jeremy" style="font-size:16px;font-weight:800;text-decoration:underline;padding:8px 0;align-self:flex-start">Composer mon assiette</a>
+  </main>
+
+  <div class="bar">
+    <p style="font-size:14px;color:var(--muted);text-align:center">Le paiement se fait à la borne.</p>
+  </div>
+</div>
+</section>
+<section class="screen" id="s-phone-2-jeremy-qr" data-w="390" data-h="844" data-title="Smartphone 2 · QR code de commande" hidden>
+<style>
+#s-phone-2-jeremy-qr *{box-sizing:border-box}
+#s-phone-2-jeremy-qr a{text-decoration:none;color:inherit}
+#s-phone-2-jeremy-qr h1,#s-phone-2-jeremy-qr h2,#s-phone-2-jeremy-qr h3,#s-phone-2-jeremy-qr p{margin:0}
+#s-phone-2-jeremy-qr .p{width:390px;height:844px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-phone-2-jeremy-qr .top{flex:none;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#fff;border-bottom:1px solid var(--line)}
+#s-phone-2-jeremy-qr .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.3px}
+#s-phone-2-jeremy-qr .me{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:22px;background:var(--green-soft);color:var(--green);font-size:15px;font-weight:800}
+#s-phone-2-jeremy-qr .body{flex:1;min-height:0;overflow:hidden;padding:20px 20px 12px;display:flex;flex-direction:column;gap:16px}
+#s-phone-2-jeremy-qr .card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px}
+#s-phone-2-jeremy-qr .bar{flex:none;padding:12px 20px 20px;background:#fff;border-top:1px solid var(--line)}
+#s-phone-2-jeremy-qr .sec{display:flex;align-items:center;justify-content:center;height:56px;border-radius:16px;background:#fff;color:var(--ink);border:2px solid var(--ink);font-size:18px;font-weight:800}
+</style>
+<div class="p">
+  <header class="top">
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <span class="me"><svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 25l10 10 18-20"/></svg>Jérémy</span>
+  </header>
+
+  <main class="body">
+    <div>
+      <h1 style="font-size:28px;line-height:1.15;font-weight:800;letter-spacing:-.5px">Votre commande est prête</h1>
+      <p style="font-size:16px;color:var(--muted);margin-top:4px">Il ne reste qu'à la valider à la borne.</p>
+    </div>
+
+    <section class="card" style="display:flex;align-items:center;gap:12px" aria-label="Récapitulatif">
+      <div style="flex:1">
+        <h2 style="font-size:17px;font-weight:800">Penne bolognaise</h2>
+        <p style="font-size:14px;color:var(--muted)">Parmesan · Sur place</p>
+      </div>
+      <b style="font-size:18px">10,00 €</b>
+    </section>
+
+    <a href="#kiosk-retrouver-commande" class="card" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px" aria-label="QR code de commande (simulation du scan à la borne)">
+      <svg viewBox="-1 -1 27 27" width="236" height="236" role="img" aria-label="QR code (maquette)"><rect x="-1" y="-1" width="27" height="27" fill="#fff"/><path fill="#1C1B1A" d="M8 0h1v1h-1zM10 0h1v1h-1zM11 0h1v1h-1zM13 0h2v1h-2zM16 0h1v1h-1zM11 1h6v1h-6zM8 2h1v1h-1zM11 2h1v1h-1zM12 2h1v1h-1zM16 2h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM12 3h1v1h-1zM13 3h1v1h-1zM14 3h1v1h-1zM16 3h1v1h-1zM8 4h1v1h-1zM10 4h3v1h-3zM13 4h1v1h-1zM14 4h1v1h-1zM15 4h1v1h-1zM16 4h1v1h-1zM8 5h1v1h-1zM10 5h1v1h-1zM11 5h1v1h-1zM13 5h1v1h-1zM14 5h1v1h-1zM15 5h2v1h-2zM8 6h1v1h-1zM9 6h1v1h-1zM10 6h1v1h-1zM11 6h1v1h-1zM13 6h1v1h-1zM15 6h1v1h-1zM8 7h1v1h-1zM11 7h2v1h-2zM13 7h1v1h-1zM14 7h1v1h-1zM16 7h1v1h-1zM1 8h1v1h-1zM4 8h1v1h-1zM5 8h6v1h-6zM11 8h1v1h-1zM16 8h2v1h-2zM20 8h1v1h-1zM21 8h1v1h-1zM22 8h1v1h-1zM23 8h1v1h-1zM4 9h1v1h-1zM7 9h1v1h-1zM11 9h1v1h-1zM13 9h1v1h-1zM17 9h1v1h-1zM19 9h1v1h-1zM20 9h1v1h-1zM21 9h1v1h-1zM22 9h1v1h-1zM23 9h1v1h-1zM0 10h2v1h-2zM2 10h1v1h-1zM4 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM9 10h1v1h-1zM10 10h2v1h-2zM15 10h5v1h-5zM20 10h1v1h-1zM22 10h2v1h-2zM24 10h1v1h-1zM1 11h1v1h-1zM2 11h3v1h-3zM5 11h2v1h-2zM7 11h1v1h-1zM12 11h4v1h-4zM16 11h2v1h-2zM21 11h1v1h-1zM23 11h1v1h-1zM0 12h1v1h-1zM2 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM11 12h1v1h-1zM16 12h1v1h-1zM18 12h2v1h-2zM21 12h1v1h-1zM22 12h1v1h-1zM23 12h1v1h-1zM24 12h1v1h-1zM5 13h1v1h-1zM6 13h3v1h-3zM13 13h1v1h-1zM15 13h1v1h-1zM19 13h2v1h-2zM21 13h1v1h-1zM23 13h1v1h-1zM0 14h1v1h-1zM1 14h2v1h-2zM4 14h3v1h-3zM8 14h2v1h-2zM11 14h1v1h-1zM12 14h2v1h-2zM14 14h1v1h-1zM15 14h1v1h-1zM16 14h9v1h-9zM0 15h1v1h-1zM6 15h1v1h-1zM9 15h1v1h-1zM10 15h1v1h-1zM12 15h1v1h-1zM13 15h1v1h-1zM14 15h1v1h-1zM15 15h1v1h-1zM16 15h1v1h-1zM19 15h1v1h-1zM22 15h3v1h-3zM3 16h2v1h-2zM7 16h1v1h-1zM8 16h1v1h-1zM9 16h3v1h-3zM12 16h1v1h-1zM14 16h1v1h-1zM15 16h4v1h-4zM23 16h1v1h-1zM10 17h1v1h-1zM14 17h1v1h-1zM19 17h1v1h-1zM20 17h4v1h-4zM8 18h1v1h-1zM10 18h1v1h-1zM13 18h1v1h-1zM18 18h1v1h-1zM20 18h5v1h-5zM8 19h1v1h-1zM16 19h1v1h-1zM18 19h1v1h-1zM19 19h3v1h-3zM22 19h1v1h-1zM23 19h1v1h-1zM24 19h1v1h-1zM10 20h1v1h-1zM11 20h4v1h-4zM15 20h1v1h-1zM17 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1zM21 20h1v1h-1zM23 20h1v1h-1zM9 21h1v1h-1zM10 21h5v1h-5zM15 21h1v1h-1zM16 21h1v1h-1zM21 21h1v1h-1zM24 21h1v1h-1zM13 22h1v1h-1zM16 22h3v1h-3zM19 22h3v1h-3zM24 22h1v1h-1zM8 23h1v1h-1zM10 23h1v1h-1zM13 23h2v1h-2zM15 23h1v1h-1zM17 23h1v1h-1zM19 23h2v1h-2zM21 23h1v1h-1zM22 23h1v1h-1zM23 23h1v1h-1zM24 23h1v1h-1zM9 24h1v1h-1zM11 24h2v1h-2zM13 24h1v1h-1zM18 24h1v1h-1zM19 24h2v1h-2zM22 24h3v1h-3z"/><g fill="none" stroke="#1C1B1A" stroke-width="1"><rect x="0.5" y="0.5" width="6" height="6"/><rect x="18.5" y="0.5" width="6" height="6"/><rect x="0.5" y="18.5" width="6" height="6"/></g><g fill="#1C1B1A"><rect x="2" y="2" width="3" height="3"/><rect x="20" y="2" width="3" height="3"/><rect x="2" y="20" width="3" height="3"/></g></svg>
+      <p style="font-size:14px;color:var(--muted)">Code de commande</p>
+      <p style="font-size:26px;font-weight:800;letter-spacing:2px">PL-4821</p>
+    </a>
+
+    <p style="font-size:16px;line-height:1.4;text-align:center">Scannez ce code à la borne pour <b>payer</b> et <b>lancer la préparation</b> en cuisine.</p>
+    <p style="font-size:14px;font-weight:800;color:var(--green);text-align:center">Prototype : touchez le code pour simuler le scan</p>
+  </main>
+
+  <div class="bar">
+    <a href="#phone-1-jeremy" class="sec">Modifier ma commande</a>
+  </div>
+</div>
+</section>
+<section class="screen" id="s-phone-3-alexei-chatbot" data-w="390" data-h="844" data-title="Smartphone 3 · Alexovitch et le chatbot" hidden>
+<style>
+#s-phone-3-alexei-chatbot *{box-sizing:border-box}
+#s-phone-3-alexei-chatbot a{text-decoration:none;color:inherit}
+#s-phone-3-alexei-chatbot h1,#s-phone-3-alexei-chatbot h2,#s-phone-3-alexei-chatbot h3,#s-phone-3-alexei-chatbot p{margin:0}
+#s-phone-3-alexei-chatbot .p{width:390px;height:844px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-phone-3-alexei-chatbot .url{flex:none;height:52px;display:flex;align-items:center;gap:8px;padding:0 16px;background:#ECE8E2;font-size:14px;color:var(--muted)}
+#s-phone-3-alexei-chatbot .url span{flex:1;background:#fff;border-radius:18px;height:34px;display:flex;align-items:center;padding:0 14px}
+#s-phone-3-alexei-chatbot .top{flex:none;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:#fff;border-bottom:1px solid var(--line)}
+#s-phone-3-alexei-chatbot .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.3px}
+#s-phone-3-alexei-chatbot .lang{display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 14px;border-radius:22px;border:1px solid var(--line);font-size:15px;font-weight:800;background:#fff}
+#s-phone-3-alexei-chatbot .chat{flex:1;min-height:0;overflow:hidden;padding:16px 16px 8px;display:flex;flex-direction:column;gap:12px}
+#s-phone-3-alexei-chatbot .bot{align-self:flex-start;max-width:88%;background:#fff;border:1px solid var(--line);border-radius:18px 18px 18px 4px;padding:12px 14px;font-size:16px;line-height:1.4}
+#s-phone-3-alexei-chatbot .me{align-self:flex-end;max-width:80%;background:var(--red);color:#fff;border-radius:18px 18px 4px 18px;padding:12px 14px;font-size:16px;line-height:1.4;font-weight:600}
+#s-phone-3-alexei-chatbot .sug{align-self:flex-start;width:94%;background:#fff;border:2px solid var(--green);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px}
+#s-phone-3-alexei-chatbot .chips{flex:none;display:flex;gap:8px;padding:0 16px 8px;overflow:hidden}
+#s-phone-3-alexei-chatbot .chips button{font:inherit;font-size:15px;font-weight:700;height:44px;padding:0 16px;border-radius:22px;border:2px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;white-space:nowrap}
+#s-phone-3-alexei-chatbot .inp{flex:none;display:flex;align-items:center;gap:10px;padding:10px 16px 20px;background:#fff;border-top:1px solid var(--line)}
+#s-phone-3-alexei-chatbot .inp input{flex:1;height:52px;border-radius:26px;border:2px solid var(--line);padding:0 18px;font:inherit;font-size:16px;color:var(--ink);background:#fff}
+#s-phone-3-alexei-chatbot .inp button{width:52px;height:52px;border-radius:26px;border:0;background:var(--red);cursor:pointer;display:grid;place-items:center}
+#s-phone-3-alexei-chatbot .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+<div class="p">
+  <div class="url">
+    <svg width="16" height="16" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" aria-hidden="true"><rect x="9" y="21" width="30" height="21" rx="4"/><path d="M16 21v-6a8 8 0 0 1 16 0v6"/></svg>
+    <span>pastalavista.example/ru</span>
+  </div>
+  <header class="top">
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <span class="lang"><svg width="18" height="18" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-9 10-9 26 0 36M24 6c9 10 9 26 0 36"/></svg>RU</span>
+  </header>
+
+  <main class="chat" aria-label="Чат-помощник">
+    <div class="bot">Здравствуйте! Расскажите, чего вам хочется, и я подберу блюдо.</div>
+    <div class="me">Много медленных углеводов и белка</div>
+    <div class="bot">Отличный выбор! Вот что я предлагаю:</div>
+    <section class="sug" aria-label="Предложенное блюдо">
+      <div style="display:flex;align-items:center;gap:12px">
+        <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#8E2A1A"/><path d="M12 30c6-8 10 8 18 0s12 8 20 0" fill="none" stroke="#B98A4E" stroke-width="5" stroke-linecap="round"/><path d="M14 40c6-8 10 8 16 0s10 8 18 0" fill="none" stroke="#B98A4E" stroke-width="5" stroke-linecap="round"/></svg>
+        <div style="flex:1">
+          <h2 style="font-size:17px;line-height:1.25;font-weight:800">Спагетти цельнозерновые XL, соус болоньезе, курица × 2</h2>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:var(--green-soft);border-radius:12px;padding:8px 12px">
+        <span style="font-size:15px;font-weight:800;color:var(--green)">1 300 ккал · 104 г белка</span>
+        <b style="font-size:17px">17,00 €</b>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button type="button" style="flex:1;height:52px;border-radius:14px;border:0;background:var(--red);color:#fff;font:inherit;font-size:16px;font-weight:800;cursor:pointer">Добавить в заказ</button>
+        <button type="button" style="height:52px;padding:0 16px;border-radius:14px;border:2px solid var(--ink);background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:800;cursor:pointer">Изменить</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="chips">
+    <button type="button">Показать меню</button>
+    <button type="button">Позвать сотрудника</button>
+  </div>
+  <form class="inp" onsubmit="return false">
+    <label class="sr" for="msg">Сообщение</label>
+    <input id="msg" type="text" placeholder="Напишите сообщение">
+    <button type="submit" aria-label="Отправить"><svg width="24" height="24" viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 24l36-16-12 32-8-12z"/></svg></button>
+  </form>
+</div>
+</section>
+<section class="screen" id="s-kiosk-retrouver-commande" data-w="810" data-h="1440" data-title="Borne · Commande retrouvée" hidden>
+<style>
+#s-kiosk-retrouver-commande *{box-sizing:border-box}
+#s-kiosk-retrouver-commande a{text-decoration:none;color:inherit}
+#s-kiosk-retrouver-commande h1,#s-kiosk-retrouver-commande h2,#s-kiosk-retrouver-commande h3,#s-kiosk-retrouver-commande p{margin:0}
+#s-kiosk-retrouver-commande button{font:inherit;color:inherit}
+#s-kiosk-retrouver-commande .k{width:810px;height:1440px;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+#s-kiosk-retrouver-commande .top{height:112px;flex:none;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+#s-kiosk-retrouver-commande .logo{display:flex;align-items:center;gap:14px;font-weight:800;font-size:34px;letter-spacing:-.5px}
+#s-kiosk-retrouver-commande .tools{display:flex;gap:12px}
+#s-kiosk-retrouver-commande .tl{height:72px;min-width:72px;padding:0 20px;border-radius:18px;border:2px solid #57524C;background:var(--ink2);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:24px;font-weight:800;cursor:pointer}
+#s-kiosk-retrouver-commande .tl.ok{background:var(--green);border-color:var(--green)}
+#s-kiosk-retrouver-commande .crumbs{height:72px;flex:none;background:#fff;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;font-size:24px;font-weight:800;color:var(--muted)}
+#s-kiosk-retrouver-commande .crumbs .on{color:#fff;background:var(--red);padding:8px 22px;border-radius:24px}
+#s-kiosk-retrouver-commande .crumbs .dn{color:var(--green)}
+#s-kiosk-retrouver-commande .main{flex:1;min-height:0;padding:22px 28px;display:flex;flex-direction:column;gap:18px;overflow:hidden}
+#s-kiosk-retrouver-commande .card{background:#fff;border:3px solid var(--line);border-radius:26px}
+#s-kiosk-retrouver-commande .cin{flex:1;height:100px;border-radius:22px;border:4px solid var(--line);padding:0 28px;font:inherit;font-size:36px;font-weight:800;letter-spacing:3px;color:var(--ink);background:#fff}
+#s-kiosk-retrouver-commande .vb{height:100px;padding:0 36px;border-radius:22px;border:4px solid var(--ink);background:#fff;color:var(--ink);font:inherit;font-size:30px;font-weight:800;cursor:pointer}
+#s-kiosk-retrouver-commande .dock{height:232px;flex:none;background:#fff;border-top:5px solid var(--ink);padding:20px 28px;display:flex;align-items:center;gap:16px}
+#s-kiosk-retrouver-commande .tot{font-size:26px;font-weight:700;color:var(--muted);line-height:1.15}
+#s-kiosk-retrouver-commande .tot b{display:block;font-size:50px;color:var(--ink);font-weight:800}
+#s-kiosk-retrouver-commande .bn{height:110px;border-radius:20px;font-size:32px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:0 28px;cursor:pointer;border:4px solid var(--ink);background:#fff;color:var(--ink)}
+#s-kiosk-retrouver-commande .bn.p{background:var(--red);border-color:var(--red);color:#fff}
+#s-kiosk-retrouver-commande .term{height:84px;flex:none;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;font-size:26px;font-weight:800}
+#s-kiosk-retrouver-commande .slot{width:150px;height:22px;border-radius:11px;background:#000;border:2px solid #fff}
+</style>
+<div class="k">
+  <header class="top">
+    <div class="logo">
+      <svg width="52" height="52" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#C8321B"/><path d="M14 30c6-8 10 8 18 0s12 8 18 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M16 42c6-8 10 8 16 0s10 8 16 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/></svg>
+      PastaLaVista
+    </div>
+    <div class="tools">
+      <span class="tl ok"><svg width="30" height="30" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 25l10 10 18-20"/></svg>Jérémy M.</span>
+      <button type="button" class="tl" aria-label="Accessibilité"><svg width="34" height="34" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="9" r="4"/><path d="M11 18h26M24 18v14M24 32l-8 12M24 32l8 12"/></svg></button>
+      <button type="button" class="tl" aria-label="Aide" style="font-size:34px">?</button>
+    </div>
+  </header>
+
+  <nav class="crumbs" aria-label="Étapes de la commande"><span class="dn">✓ 1 Choisir</span>›<span class="dn">✓ 2 Commander</span>›<span class="on">3 Payer</span></nav>
+
+  <main class="main">
+    <section style="display:flex;align-items:center;gap:22px;background:var(--green-soft);border:5px solid var(--green);border-radius:28px;padding:24px" aria-label="Commande retrouvée">
+      <svg width="92" height="92" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#1F6B43"/><path d="M18 33l9 9 19-21" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+        <h1 style="font-size:40px;line-height:1.08;font-weight:800;color:var(--green)">Commande PL-4821 retrouvée</h1>
+        <p style="font-size:26px">Préparée sur votre smartphone. Rien à ressaisir.</p>
+      </div>
+    </section>
+
+    <section class="card" style="padding:22px 24px;display:flex;flex-direction:column;gap:14px" aria-label="Récapitulatif">
+      <div style="display:flex;align-items:center;gap:22px">
+        <svg width="104" height="104" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#fff" stroke="#DDD7CF" stroke-width="2"/><circle cx="32" cy="32" r="22" fill="#8E2A1A"/><g fill="#E9B44C" stroke="#B9831A" stroke-width="1.5"><rect x="14" y="26" width="22" height="9" rx="4.5" transform="rotate(-25 25 30)"/><rect x="28" y="33" width="22" height="9" rx="4.5" transform="rotate(-25 39 37)"/></g></svg>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px"><h2 style="font-size:32px;font-weight:800">Penne bolognaise</h2><p style="font-size:24px;color:var(--muted)">Parmesan · Sur place</p></div>
+        <b style="font-size:34px">10,00 €</b>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:24px;font-weight:700;color:var(--muted)">
+        <svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><rect x="14" y="5" width="20" height="38" rx="5"/><path d="M21 38h6"/></svg>
+        Commande préparée sur smartphone
+      </div>
+    </section>
+
+    <button type="button" class="card" aria-pressed="true" style="display:flex;align-items:center;gap:22px;padding:0 24px;height:140px;cursor:pointer;text-align:left;font:inherit;border-color:var(--red);box-shadow:0 0 0 3px var(--red);background:var(--red-soft)">
+      <svg width="64" height="64" viewBox="0 0 48 48" fill="none" stroke="#1C1B1A" stroke-width="3" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="38" height="26" rx="5"/><path d="M5 20h38"/></svg>
+      <span style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font-size:32px;font-weight:800">Carte •••• 4242</span><span style="font-size:24px;color:var(--muted)">Enregistrée dans votre compte</span></span>
+      <svg width="52" height="52" viewBox="0 0 48 48" fill="none" stroke="#C8321B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 25l10 10 18-20"/></svg>
+    </button>
+
+    <section class="card" style="padding:22px 24px;display:flex;flex-direction:column;gap:12px;margin-top:auto" aria-label="Retrouver une autre commande">
+      <h2 style="font-size:30px;font-weight:800">Autre commande à retrouver ?</h2>
+      <p style="font-size:24px;color:var(--muted)">Téléphone déchargé ? Saisissez votre code de commande.</p>
+      <form style="display:flex;gap:14px" onsubmit="return false">
+        <label for="code" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Code de commande</label>
+        <input id="code" class="cin" type="text" placeholder="PL-____" autocomplete="off">
+        <button type="submit" class="vb">Valider</button>
+      </form>
+    </section>
+  </main>
+
+  <section class="dock" aria-label="Total et paiement">
+    <div class="tot">Total à payer<b>10,00 €</b></div>
+    <a class="bn" href="#Main" style="margin-left:auto">Retour</a>
+    <a class="bn p" href="#kiosk-retrouver-commande" style="width:340px">Payer</a>
+  </section>
+
+  <footer class="term"><span class="slot" aria-hidden="true"></span>Approchez votre carte du terminal ci-dessous</footer>
+</div>
+</section>
+</div></main>
+<script>
+(function () {
+  var screens = Array.prototype.slice.call(document.querySelectorAll(".screen"));
+  var nav = document.getElementById("nav");
+  var frame = document.getElementById("frame");
+  var current = null;
+
+  function go(id) {
+    try { history.replaceState(null, "", "#" + id); } catch (e) {}
+    show(id);
+    window.scrollTo(0, 0);
+  }
+
+  function show(id) {
+    id = id || (location.hash || "").replace("#", "") || "Main";
+    var target = document.getElementById("s-" + id) || screens[0];
+    screens.forEach(function (s) { s.hidden = s !== target; });
+    current = target;
+    nav.value = target.id.slice(2);
+    document.title = target.getAttribute("data-title") + " – PastaLaVista";
+    fit();
+  }
+
+  function fit() {
+    if (!current) return;
+    var w = +current.getAttribute("data-w");
+    var h = +current.getAttribute("data-h");
+    var bar = document.querySelector(".bar").offsetHeight;
+    var scale = Math.min(1, (window.innerWidth - 32) / w, (window.innerHeight - bar - 32) / h);
+    current.style.width = w + "px";
+    current.style.height = h + "px";
+    current.style.transform = "scale(" + scale + ")";
+    frame.style.width = Math.round(w * scale) + "px";
+    frame.style.height = Math.round(h * scale) + "px";
+  }
+
+  nav.addEventListener("change", function () { go(nav.value); });
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (a) { e.preventDefault(); go(a.getAttribute("href").slice(1)); }
+  });
+  window.addEventListener("hashchange", function () { show(); });
+  window.addEventListener("resize", fit);
+  show();
+})();
+</script>
+</body>
+</html>

@@ -37,11 +37,12 @@ General
 - Comments explain *why*, not *what*. Write them in French. Keep them rare and accurate.
 - Keep functions pure where possible; isolate side effects (I/O, sensors, timers, storage) behind small modules.
 - Add or update tests for any logic you add, especially the adaptation rules and the context detection.
-- Follow the formatter/linter of the chosen stack once configured; do not fight it. Until a stack is chosen, ask before introducing tooling.
+- Follow the formatter/linter once configured; do not fight it. Ask before adding tooling or dependencies beyond React and Vite.
+- Build the UI from **small reusable React components** shared by the kiosk and the smartphone (buttons, quantity stepper, nutrition badge, QR code, language selector...). Kiosk and smartphone share design tokens and base components; only the layouts differ. The component inventory is in the design canvas ("Composants React").
 
 ## Code organisation
 
-The stack is not chosen yet. Whatever it is, keep these separations (adapt folder names to the stack's idioms once decided, and update this section):
+The stack is **React + Vite**. Keep these separations (the tree is the target layout; adapt folder names to React/Vite idioms as the code grows):
 
 ```
 /
