@@ -5,7 +5,7 @@ const LOG_LEVELS = ['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'
 const envSchema = z.object({
   API_HOST: z.string().min(1).default('127.0.0.1'),
   API_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
-  API_CORS_ORIGINS: z.string().default('http://localhost:5173,http://127.0.0.1:5173'),
+  API_CORS_ORIGINS: z.string().default('http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173'),
   LOG_LEVEL: z.enum(LOG_LEVELS).default('info'),
   DRAFT_TTL_MINUTES: z.coerce.number().int().positive().default(30),
   LOGIN_SESSION_TTL_SECONDS: z.coerce.number().int().positive().default(120),

@@ -18,15 +18,69 @@ Application de commande de pâtes pour un fast-food fictif : une **borne** (écr
 
 ## Installation et lancement
 
+1. **Récupérer la branche** (tant qu'elle n'est pas fusionnée dans `main`) :
+
+```powershell
+git clone https://github.com/QuentinELLEON/PastaLaVista.git
+cd PastaLaVista
+git checkout feat/application-complete
+```
+
+2. **Installer les dépendances** (une seule fois, à la racine : tous les paquets sont installés ensemble) :
+
 ```powershell
 npm install
+```
+
+3. **Lancer l'API et le web en même temps** :
+
+```powershell
 npm run dev
 ```
 
-- Interface web : <http://localhost:5173> (la racine propose borne ou smartphone si l'appareil n'est pas déterminé).
-- API : <http://localhost:3001/api/v1/health>
+Le terminal affiche les deux serveurs (`[api]` et `[web]`). Attendre les lignes « Server listening » (API) et « ready » (Vite), puis ouvrir :
 
-Configuration facultative : copier `.env.example` vers `.env` (ports, durée de validité des brouillons, origines CORS...). Voir [docs/api.md](docs/api.md) pour toutes les routes.
+| Quoi | Adresse |
+|---|---|
+| Borne (écran portrait, mis à l'échelle de la fenêtre) | <http://localhost:5173/kiosk> |
+| Smartphone (idéalement avec l'émulation mobile du navigateur, F12) | <http://localhost:5173/m> |
+| Prévisualisation de production (`preview`) | <http://localhost:4173/kiosk> |
+| Racine (choix borne / smartphone si l'appareil n'est pas déterminé) | <http://localhost:5173> |
+| Santé de l'API | <http://localhost:3001/api/v1/health> |
+
+Arrêter avec `Ctrl+C`. L'API stocke tout en mémoire : **chaque redémarrage repart de zéro** (commandes, brouillons, cuisine).
+
+> L'API doit tourner pour que le web fonctionne (menu, commandes). Si l'écran affiche « Service indisponible », vérifier le terminal `[api]` puis cliquer sur « Réessayer ».
+
+### Lancer les deux serveurs séparément
+
+```powershell
+npm run dev -w @pastalavista/api
+npm run dev -w @pastalavista/web
+```
+
+(dans deux terminaux). Utile pour lire les journaux d'un seul côté.
+
+### Configuration (facultative)
+
+Copier `.env.example` vers `.env` à la racine pour changer les valeurs par défaut : port de l'API, origines CORS, durée de validité des brouillons (30 min), désactivation de la connexion de démonstration, URL de l'API vue par le web (`VITE_API_URL`), identifiant de borne par défaut. Le fichier `.env` n'est jamais versionné. Redémarrer `npm run dev` après modification.
+
+### Version de production (test local)
+
+```powershell
+npm run build
+npm run start -w @pastalavista/api
+npm run preview -w @pastalavista/web
+```
+
+Le panneau **Dev** et les boutons de simulation n'y sont pas actifs (sauf `VITE_ENABLE_DEV_TOOLS=true` à la construction). Voir [docs/api.md](docs/api.md) pour toutes les routes.
+
+### Problèmes fréquents
+
+- **Port déjà utilisé** (3001 ou 5173) : fermer l'ancien processus, ou changer `API_PORT` dans `.env` (et `VITE_API_URL` en conséquence).
+- **Erreur CORS dans la console** : le web doit être ouvert sur `localhost:5173` (ou `127.0.0.1:5173`), ou ajouter l'origine à `API_CORS_ORIGINS`.
+- **Commande introuvable après un redémarrage de l'API** : normal, les brouillons sont en mémoire ; refaire la commande sur le smartphone.
+- **Node trop ancien** : vérifier `node -v` (22 minimum).
 
 ### Parcours de démonstration
 
