@@ -1,0 +1,200 @@
+/* Smartphone : une colonne, un sujet par écran, bouton principal en bas */
+.phone {
+  --btn-h: 56px;
+  --btn-font: 18px;
+  --touch-min: 44px;
+  --qty-size: 44px;
+  --radius: 16px;
+  --row-h: 76px;
+  --row-name-font: 18px;
+  --row-desc-font: 14px;
+  --tile-h: 0;
+  --lang-h: 44px;
+  --lang-font: 16px;
+  --help-title-font: 20px;
+  --help-btn-h: 52px;
+  --help-btn-font: 16px;
+  --nutrition-font: 14px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--bg);
+  position: relative;
+}
+.phone[data-density='comfortable'] {
+  --row-h: 96px;
+  --btn-h: 64px;
+}
+.p-top {
+  flex: none;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.p-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.3px;
+}
+.p-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 22px;
+  background: var(--green-soft);
+  color: var(--green);
+  font-size: 15px;
+  font-weight: 800;
+  border: 0;
+}
+.p-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 20px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.p-body > * {
+  /* Le corps défile : aucun bloc ne doit être écrasé pour tenir dans l'écran */
+  flex-shrink: 0;
+}
+.p-title {
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.p-sub {
+  color: var(--muted);
+  font-size: 16px;
+}
+.p-bar {
+  flex: none;
+  padding: 12px 20px 20px;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 10px;
+}
+.p-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.p-seg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 6px;
+}
+.p-seg button {
+  height: 48px;
+  border-radius: 12px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 800;
+}
+.p-seg button[aria-pressed='true'] {
+  background: var(--ink);
+  color: #fff;
+}
+.p-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  text-align: left;
+  width: 100%;
+}
+.p-row__text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.p-row__name {
+  font-weight: 800;
+  font-size: 17px;
+}
+.p-row__desc {
+  color: var(--muted);
+  font-size: 14px;
+}
+.p-add {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  border: 0;
+  font-size: 26px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.p-ticket {
+  align-items: center;
+  text-align: center;
+}
+.p-code {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 4px;
+}
+.p-stepper {
+  display: flex;
+  gap: 6px;
+}
+.p-stepper span {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+}
+.p-stepper span[data-on='true'] {
+  background: var(--red);
+}
+.p-url {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  margin: 8px 16px 0;
+  border-radius: 12px;
+  background: #e8e3dc;
+  color: var(--muted);
+  font-size: 14px;
+}
+.p-chat {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px;
+}
