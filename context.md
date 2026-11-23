@@ -125,6 +125,7 @@ Source: `IHMAdaptativesCours1-20262027.pdf`.
 | 2026-11-23 | **Stack: React + Vite**; maximise reusable components shared by kiosk and smartphone |
 | 2026-11-23 | High-fidelity prototype built in a Claude Design canvas and exported as a standalone HTML file |
 | 2026-11-23 | Human docs in French, AI files in English; never AI co-author; never push to `main` |
+| 2026-11-23 | **Full-stack implementation**: npm-workspaces monorepo (`apps/web`, `apps/api`, `packages/shared`), TypeScript strict everywhere, Fastify API, no database yet (in-memory repositories behind domain ports), Vitest. See section 12 and `docs/architecture.md` |
 
 ## 5. Business domain and mock data
 
@@ -471,7 +472,7 @@ The component sheet is also in the Claude Design canvas ("Composants React").
 
 ## 12. Technical architecture (React + Vite)
 
-**Decided:** React + Vite. **Not decided:** JavaScript vs TypeScript, styling approach, test framework (ask before choosing). The snippets below use TypeScript-style notation for clarity only.
+**Decided (2026-11-23):** React 19 + Vite, **TypeScript (strict) everywhere**, npm workspaces monorepo, Node API with **Fastify** (light, structured logging with redaction, `inject()` for route tests), **zod** for validation (schemas in `packages/shared`), **Vitest** (+ Testing Library) for tests, plain CSS with design tokens (CSS variables in one file), hand-written i18n dictionaries (fr, en, ru), `qrcode.react` for QR rendering, React Router for `/kiosk/*` and `/m/*`. **No database yet**: repositories are interfaces in the domain, with in-memory implementations loaded from seed files; only `composition-root.ts` knows the implementations. Human-facing detail: `docs/architecture.md`, `docs/migration-base-de-donnees.md`, `docs/api.md`.
 
 ### 12.1 Target layout
 
@@ -480,15 +481,13 @@ PastaLaVista/
 ├── AGENTS.md  CLAUDE.md  context.md     # AI-facing (English)
 ├── README.md  docs/                     # human-facing (French)
 ├── subject_definition/                  # instructors' PDFs, read-only
-├── prototypes/                          # standalone HTML prototype
-└── src/
-    ├── ui/{standard,adapted}/           # presentation only
-    ├── adaptation/{context,rules,engine}/
-    ├── domain/                          # products, menu, cart, order, payment
-    └── shared/                          # constants, types, utilities
+├── prototypes/                          # standalone HTML prototype (visual reference)
+├── packages/shared/                     # DTO types, zod schemas, pricing/nutrition, adaptation rule schema
+├── apps/api/src/{config,domain,infrastructure,chat,http}/ + composition-root.ts
+└── apps/web/src/{ui,adaptation,domain,services,i18n,shared,dev}/
 ```
 
-Rules: dependencies point inward (`ui` → `adaptation`/`domain` → `shared`); `domain` knows nothing about UI or adaptation; the standard UI works with the engine disabled; adaptation rules are **data**; detection, decision and rendering are separate; mocks and a debug panel (force persona or device) live in a clearly named dev area.
+Rules: dependencies point inward (`ui` -> `adaptation`/`domain`/`services` -> `shared`); `domain` knows nothing about UI or adaptation; the standard UI works with the engine disabled; adaptation rules are **data**; detection, decision and rendering are separate; mocks and the debug panel live in `dev/`, never in production paths. On the API side: `http` -> `domain/services` -> `domain/ports` <- `infrastructure/memory`.
 
 ### 12.2 Domain model (sketch)
 
