@@ -47,6 +47,8 @@ Ce document décrit l'architecture de l'application full-stack (borne + smartpho
 │           ├── domain/          # Panier, composition, catalogue côté client (sans React)
 │           ├── services/        # Client HTTP de l'API
 │           ├── i18n/            # Dictionnaires fr / en / ru
+│           ├── state/           # Session (panier, étape, aide) et catalogue : au-dessus de l'IHM adaptative
+│           ├── mock/            # Comptes de démonstration de l'authentification simulée
 │           ├── shared/          # Constantes, utilitaires
 │           └── dev/             # Panneau de debug et simulateurs (jamais dans les chemins de production)
 ├── packages/shared/             # Types, DTO, schémas zod, calcul de prix et de nutrition, schéma des règles
@@ -139,5 +141,18 @@ UiConfig ─► AdaptationProvider ─► composants (aucune règle dans les com
 - Le seed d'une commande de démonstration n'est pas pré-créé : un brouillon est créé depuis le smartphone (le code est alors aléatoire).
 - Le jeton est à usage unique **pour un échange** : le même brouillon peut être relu par la borne qui l'a récupéré (rechargement de page) mais pas par une autre borne.
 - L'expiration est glissante côté smartphone (chaque modification d'un brouillon `draft` repousse la date), fixe ensuite.
-- L'offre d'aide n'est jamais appliquée sans réponse du client (plus strict que `docs/adaptation-alexei-lenteur.md`, qui prévoyait un passage en mode guidé sans réponse).
 - Les langues proposées sont celles qui sont traduites (fr, en, ru) ; les textes russes sont à faire relire par un locuteur natif.
+- Les identifiants du seed du catalogue sont lisibles (`pasta-penne`) ; les données créées par l'application ont des UUID. Le client ne les interprète jamais.
+- Les compositions populaires ont un prix fixe (La Classique 9,50 €, La Veggie 10,00 €, La Protéinée 13,00 €) ; les modifier les transforme en assiette libre au prix calculé.
+- La « Boisson » du catalogue d'extras est représentée par la rubrique Boissons (eau, limonade, jus d'orange).
+
+### Écarts entre l'implémentation et les documents d'étude
+
+| Sujet | Documents d'étude | Implémentation | Pourquoi |
+|---|---|---|---|
+| Aide sans réponse | `adaptation-alexei-lenteur.md` : sans réponse, la borne passe en mode guidé | L'aide est **proposée, jamais imposée** : sans réponse, l'IHM reste standard | Consigne du projet (HelpPrompt) |
+| RD6 | Une règle | Deux règles : `RD6-chatbot` (smartphone) et `RD6-staff` (borne) | Une règle ne peut pas être conditionnée par l'appareil dans son action |
+| RU3 | Interface traduite, langue dans le score | Idem, plus la présentation du concept (écran « Bienvenue ») | Le concept est proposé « juste après le choix de langue » (matrice guidée) |
+| Accessibilité | Priorité absolue, sans règle | Règle `RA1` (contraste élevé, priorité 1000) | Faire apparaître la priorité dans les données |
+| RU8 | Score < 0,3 ou refus | Le refus est une règle ; la sortie par score est gérée par l'hystérésis du contexte (20 s de stabilité) | L'hystérésis a besoin de l'historique du score |
+| Application du profil | Bascule en fin d'étape | Faits explicites (langue, compte, réponse à l'aide, contraste) appliqués tout de suite ; profil déduit du comportement appliqué à la frontière d'étape | Réactivité sur les choix explicites, stabilité sur les inférences |

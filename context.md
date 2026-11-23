@@ -125,6 +125,7 @@ Source: `IHMAdaptativesCours1-20262027.pdf`.
 | 2026-11-23 | **Stack: React + Vite**; maximise reusable components shared by kiosk and smartphone |
 | 2026-11-23 | High-fidelity prototype built in a Claude Design canvas and exported as a standalone HTML file |
 | 2026-11-23 | Human docs in French, AI files in English; never AI co-author; never push to `main` |
+| 2026-11-23 | Help is **offered, never imposed**: with no answer the UI stays standard (stricter than `docs/adaptation-alexei-lenteur.md`, which switched to guided mode on no answer) |
 | 2026-11-23 | **Full-stack implementation**: npm-workspaces monorepo (`apps/web`, `apps/api`, `packages/shared`), TypeScript strict everywhere, Fastify API, no database yet (in-memory repositories behind domain ports), Vitest. See section 12 and `docs/architecture.md` |
 
 ## 5. Business domain and mock data
@@ -489,42 +490,36 @@ PastaLaVista/
 
 Rules: dependencies point inward (`ui` -> `adaptation`/`domain`/`services` -> `shared`); `domain` knows nothing about UI or adaptation; the standard UI works with the engine disabled; adaptation rules are **data**; detection, decision and rendering are separate; mocks and the debug panel live in `dev/`, never in production paths. On the API side: `http` -> `domain/services` -> `domain/ports` <- `infrastructure/memory`.
 
-### 12.2 Domain model (sketch)
+### 12.2 Domain model
+
+Types and DTOs live in `packages/shared` (`order.ts`, `catalog.ts`, `api.ts`); entities in `apps/api/src/domain/entities`. All entities are flat, table-like: opaque string ids, foreign keys by id, money as integer cents, ISO dates, string-union statuses.
 
 ```ts
-type Mode = "dine-in" | "takeaway";
-type Product = { id: string; name: string; category: string; price: number; kcal?: number; protein?: number };
-type OrderLine = { productId: string; options: string[]; qty: number };
-type OrderDraft = { id: string; code: string; token: string; lines: OrderLine[]; mode: Mode; language: string; customerId?: string; expiresAt: string; status: "draft" | "retrieved" | "paid" | "expired" };
+type OrderMode = "dine-in" | "takeaway";
+type DraftStatus = "draft" | "retrieved" | "paid" | "sent-to-kitchen" | "expired";
+type OrderLine = { id: string; productId: string; quantity: number; extraXl: boolean; options: { productId: string; quantity: number }[] };
+// OrderDraft: id, code "PL-xxxx", token (single use), status, origin "smartphone"|"kiosk", mode, locale, customerId, kioskId, lines, expiresAt ...
 ```
 
-### 12.3 Context model (sketch)
+Pricing and nutrition are one pure function shared by web and API (`computeTotals`). Reference orders of section 5 are unit-tested (11,00 EUR; 10,00 EUR; 17,00 EUR / 1 300 kcal / 104 g; 18,00 EUR / 1 378 kcal / 110 g).
 
-```ts
-type Profile = "standard" | "regular" | "guided";
-type Device = "kiosk" | "smartphone";
-type Context = {
-  device: Device;
-  profile: Profile;
-  language: string;
-  guidanceScore: number;          // 0..1, with hysteresis
-  customerId?: string;
-  signals: { interDelayMs: number[]; backAndForth: number; missedTaps: number; screenDwellMs: number };
-};
-```
+**Order lifecycle (implemented):** a smartphone draft is `draft` with a single-use token + code; the kiosk retrieves it (`retrieved`, bound to that kiosk; the same kiosk may re-read it, another kiosk is refused); only the kiosk that holds it can pay (`paid`); the kitchen ticket is created only after the payment record exists (`sent-to-kitchen`). A draft created at the kiosk is directly `retrieved`. Draft TTL is configurable (`DRAFT_TTL_MINUTES`, default 30), sliding while the phone edits. Explicit errors: `DRAFT_EXPIRED`, `DRAFT_ALREADY_PAID`, `DRAFT_ALREADY_RETRIEVED`, `DRAFT_NOT_RETRIEVED`.
 
-### 12.4 Engine interface (sketch)
+### 12.3 Context model (`apps/web/src/adaptation/context`)
 
-```ts
-type Rule = { id: string; when: (c: Context) => boolean; apply: UiPatch; level: "content" | "presentation" | "dialogue"; priority: number };
-interface AdaptationEngine { decide(ctx: Context): UiConfig }   // static rules now, AI-assisted later: same interface
-```
+`Context = { device, language, customerId, customerOrderCount, signals, guidanceScore, guidanceMode, helpAnswer, helpRequested, highContrast, handoverReceived, draftProblem }`. Signals (action delays with the reference delay of their screen, back-and-forth, missed taps) are collected by `SignalCollector`, session-only. `guidanceScore` = 0,3 language + 0,3 relative slowness + 0,2 back-and-forth + 0,2 missed taps; `guidanceMode` comes from `nextGuidanceState` (enter at 0,6, leave when strictly < 0,3 for 20 s). Device detection (`detectDevice`): dev override > kiosk mode configured > kiosk id in the URL (a QR scan means smartphone) > explicit route > touch AND narrow; screen size alone never decides.
 
-`UiConfig` describes variants (e.g. `density`, `showNutrition`, `helpPrompt`, `inactivityTimeoutMs`, `upsellMax`), never raw styles. Components read it through a provider and animate changes.
+### 12.4 Engine and rules (`adaptation/engine`, `adaptation/rules`)
+
+`AdaptationEngine.decide(context): UiConfig` (+ optional `explain`) behind an interface; `StaticRulesEngine` applies rules sorted by ascending priority over the standard `UiConfig` (last wins). Rules are DATA (`rules.data.ts`): `{ id, summary, levels, axis, priority, when, patch }`, `when` is a declarative tree (`all`/`any`/`not`/`fact op value`), values may be `{ threshold: "path" }` references into `thresholds.config.ts` (3 orders, weights, 0,6/0,3, 20 s, factor 2, 30 s -> 90 s timeouts...). Schema in `packages/shared/src/adaptation.ts`. Priorities: accessibility 1000 (RA1) > language 900 (RU3) > device 500 (RD1-RD6) > explicit user/account 300 (RU1, RU2) > RU8 250 > inferred user 200 (RU4-RU7). `validateRules` enforces that an axis only writes the keys it owns (the device decides `layout`; user rules may not). Differences from the catalogue of section 10: RD6 is split (`RD6-chatbot`, `RD6-staff`), `RA1` added, RU3 also triggers the concept intro; see `docs/architecture.md` section 9.
 
 ### 12.5 State and transitions
 
-Cart and step state live **above** the adaptive UI (global store), so swapping a standard view for an adapted view re-injects the same state (focus, typed data, open option). Animations about 300 ms ease-in-out; respect `prefers-reduced-motion`. Switch profiles at step boundaries only.
+Session state (cart, in-progress plate and step, help answer, customer) lives above the adaptive UI (`state/SessionProvider`, pure reducer in `domain/session`). `AdaptationProvider` applies **explicit** facts immediately (language, account, help answer, contrast, device) and the **behaviour-inferred** guided mode only at step boundaries (`useStepBoundary`), except when the customer answers the help offer. Transitions are CSS (300 ms ease-in-out via `--adapt-transition`, disabled under `prefers-reduced-motion`); screens never remount on a profile change, so typed state and focus survive. The kiosk skeleton (`KioskLayout`: top bar, steps, rail, content, dock, terminal) never changes. The dev panel (`apps/web/src/dev`, lazy-loaded only when `DEV_TOOLS_ENABLED`) forces persona/device and simulates slow, hesitant, mis-tapping behaviour; its clicks are ignored by the signal collector (`data-dev-tools`).
+
+### 12.6 API (`/api/v1`, Fastify)
+
+Catalogue (categories, products with nutrition, compositions), mock auth + kiosk QR login sessions, order drafts (create/update/retrieve by token or code), simulated payment (kiosk only), kitchen queue, rule-based chat behind `ChatEngine`, health. Consistent error format `{ error: { code, message, details? } }`, zod validation, CORS for the Vite dev server, logs without personal data. Full reference: `docs/api.md`. Database migration plan: `docs/migration-base-de-donnees.md` (repository ports, in-memory implementations, contract tests, only `composition-root.ts` knows the implementations).
 
 ## 13. Stage 2: adaptation engine and AI
 
@@ -553,7 +548,7 @@ Evaluation: ordering time, abandonment rate, tap errors, average basket, satisfa
 |---|---|
 | `AGENTS.md`, `CLAUDE.md` | agent rules (English) |
 | `context.md` | this file |
-| `README.md` | title only |
+| `README.md` | French run instructions, demo scenarios, scripts |
 | `subject_definition/` | `SujetAdaptation2627VF.pdf`, `IHMAdaptativesCours1-20262027.pdf` |
 | `docs/axe-utilisateurs.md` | Users axis text (French) |
 | `docs/axe-dispositifs.md` | Devices axis text (French) |
@@ -562,10 +557,12 @@ Evaluation: ordering time, abandonment rate, tap errors, average basket, satisfa
 | `docs/requirements-prototype.md` | instructors' prototype requirements (French) |
 | `docs/reponse-sujet-adaptation.md` | point-by-point answer to the subject (French) |
 | `docs/axe-dispositifs.pdf` | PDF added by the user (not authored by the assistant) |
-| `prototypes/pastalavista-prototype.html` | standalone navigable prototype (14 screens), generated from the canvas |
+| `prototypes/pastalavista-prototype-hifi.html` | standalone navigable prototype (14 screens), generated from the canvas; the visual reference of the React app (the file is named `-hifi`, not `pastalavista-prototype.html` as older docs say) |
+| `apps/web`, `apps/api`, `packages/shared` | the implementation (React + Vite, Fastify, shared types and schemas) |
+| `docs/architecture.md`, `docs/api.md`, `docs/migration-base-de-donnees.md` | technical docs (French) |
 | Claude Design canvas | https://claude.ai/artifact/56Pd41hKfBxiUmm6gVZE4W (private; 14 screens + "Composants React" sheet; Share › Export for PDF/PNG) |
 
-The standalone HTML is generated from the canvas files; if the canvas changes, regenerate it. It is plain HTML/CSS and not React.
+The standalone HTML is generated from the canvas files; if the canvas changes, regenerate it. It is plain HTML/CSS and not React. The 14 screens are implemented as real screens: the kiosk standard / Jérémy / Alexovitch variants are ONE set of screens driven by `UiConfig` (Home, Menu, Compose, Pay, Language, Concept, Retrieve, Done), not separate screens.
 
 ## 16. Glossary (FR/EN)
 
@@ -590,7 +587,7 @@ The standalone HTML is generated from the canvas files; if the canvas changes, r
 ## 17. Open questions, risks, assumptions
 
 **Open questions (ask the team, do not decide silently):**
-- JavaScript or TypeScript; styling approach; test framework.
+- (Resolved 2026-11-23: TypeScript, plain CSS tokens, Vitest.)
 - Final split of tasks between smartphone and kiosk (assumed: no payment on phone).
 - Handover mechanism details (QR, code, account, NFC) and token lifetime.
 - Chatbot on the kiosk too? For which persona(s)?
@@ -598,6 +595,9 @@ The standalone HTML is generated from the canvas files; if the canvas changes, r
 - Group name and Slack channel.
 - Which AI techniques to explore in stage 2.
 - Whether `docs/tableau-comparatif-parcours.md` should be refreshed for the realistic kiosk wording and the Devices axis.
+
+- The kiosk QR reader is simulated (no camera): dev button + typed `PL-xxxx`. A real scanner would open the URL `/kiosk/retrieve?token=...` carried by the phone QR code.
+- Persistence: none yet (in-memory); see `docs/migration-base-de-donnees.md`.
 
 **Assumptions to validate:** all thresholds and weights (3 orders for "regular", score 0,6/0,3, 2× slowness, 20 s stability, 30 min token, 30 s → 90 s timeout); all menu data; the QR code on the storefront; saved card and account features.
 

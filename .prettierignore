@@ -4,3 +4,4 @@ coverage
 subject_definition
 prototypes
 package-lock.json
+*.md
