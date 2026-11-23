@@ -29,6 +29,7 @@ export function orderRoutes(app: FastifyInstance, container: Container): void {
     const response: DraftWithTokenResponse = {
       draft: await draftToDto(container, draft),
       token: draft.token,
+      customer: draft.customerId ? await container.auth.profileById(draft.customerId) : null,
     };
     return response;
   });

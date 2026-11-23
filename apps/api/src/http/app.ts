@@ -1,5 +1,6 @@
 import cors from '@fastify/cors';
 import Fastify, { type FastifyInstance } from 'fastify';
+import { DRAFT_TOKEN_HEADER } from '@pastalavista/shared';
 import type { Container } from '../composition-root';
 import { handleError, handleNotFound } from './errors';
 import { authRoutes } from './routes/auth-routes';
@@ -37,7 +38,12 @@ export async function buildApp(
     logger: options.logLevel === 'silent' ? false : loggerOptions(options.logLevel),
   });
 
-  await app.register(cors, { origin: options.corsOrigins });
+  // PUT est nécessaire pour modifier un brouillon (par défaut, le plugin n'autorise pas ce verbe)
+  await app.register(cors, {
+    origin: options.corsOrigins,
+    methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+    allowedHeaders: ['content-type', 'authorization', DRAFT_TOKEN_HEADER],
+  });
   app.setErrorHandler(handleError);
   app.setNotFoundHandler(handleNotFound);
 

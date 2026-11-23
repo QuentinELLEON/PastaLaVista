@@ -250,6 +250,21 @@ describe('API : parcours smartphone -> borne (intégration HTTP)', () => {
     expect(chat.json().suggestions.length).toBeGreaterThan(0);
   });
 
+  it('CORS : la pré-requête autorise PUT et les en-têtes de jeton (modification de brouillon depuis Vite)', async () => {
+    const res = await app.inject({
+      method: 'OPTIONS',
+      url: `${API}/order-drafts/abc`,
+      headers: {
+        origin: 'http://localhost:5173',
+        'access-control-request-method': 'PUT',
+        'access-control-request-headers': 'content-type,x-draft-token',
+      },
+    });
+    expect(res.statusCode).toBe(204);
+    expect(res.headers['access-control-allow-methods']).toContain('PUT');
+    expect(res.headers['access-control-allow-headers']).toContain('x-draft-token');
+  });
+
   it('santé et en-têtes CORS pour le serveur de dev Vite', async () => {
     const health = await app.inject({
       method: 'GET',

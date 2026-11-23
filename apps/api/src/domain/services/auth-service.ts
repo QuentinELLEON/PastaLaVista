@@ -52,6 +52,11 @@ export class AuthService {
     return { sessionToken: session.token, customer: await this.toProfile(customer) };
   }
 
+  /** Profil d'un client connu (utilisé quand la borne récupère sa commande). */
+  async profileById(customerId: string): Promise<CustomerProfileDto> {
+    return this.toProfile(await this.requireCustomer(customerId));
+  }
+
   async me(sessionToken: string | undefined): Promise<CustomerProfileDto> {
     return this.toProfile(await this.customerFromToken(sessionToken));
   }

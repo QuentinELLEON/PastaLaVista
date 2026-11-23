@@ -48,6 +48,8 @@ export interface DraftWithTokenResponse {
   draft: OrderDraftDto;
   /** Jeton à usage unique, à présenter à la borne (QR code). */
   token: string;
+  /** Renseigné à la récupération : la borne reconnaît le client qui a préparé la commande. */
+  customer?: CustomerProfileDto | null;
 }
 
 export interface OrderDto {
