@@ -18,7 +18,7 @@ export interface AppOptions {
  * Journalisation sans données personnelles : on ne consigne que la méthode et le MOTIF de route
  * (jamais les paramètres, la requête, les en-têtes ni les corps de message).
  */
-function loggerOptions(level: string) {
+export function loggerOptions(level: string) {
   return {
     level,
     serializers: {
