@@ -137,7 +137,7 @@ Candidate signals (all simulated or mocked in the front-end for now):
 
 ## 9. Current state of the repository
 
-- `README.md` (title), `subject_definition/` (the two instructor PDFs), `docs/tableau-comparatif-parcours.md` (French, Users axis comparison table) and these AI-instruction files.
+- `README.md` (title), `subject_definition/` (the two instructor PDFs), `docs/` (French, human-facing: `axe-utilisateurs.md`, `axe-dispositifs.md`, `tableau-comparatif-parcours.md`, `adaptation-alexei-lenteur.md`, `requirements-prototype.md`) and these AI-instruction files.
 - **No technology stack, framework, build tool, test framework or code exists yet.** Do not assume one. If asked to scaffold, ask which stack the team wants, and update `AGENTS.md` (organisation section) afterwards.
 - Git: single branch `main` with an initial commit. Work on feature branches, never push to `main`.
 
