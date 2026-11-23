@@ -40,6 +40,7 @@
 .p-logo {
   display: flex;
   align-items: center;
+  min-height: var(--touch-min);
   gap: 10px;
   font-weight: 800;
   font-size: 20px;
@@ -50,6 +51,8 @@
   align-items: center;
   gap: 8px;
   min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
   padding: 0 14px;
   border-radius: 22px;
   background: var(--green-soft);

@@ -15,31 +15,34 @@ interface Options {
 
 /** Remise à zéro de la borne après inactivité, précédée d'un avertissement (écran public : ne rien laisser affiché). */
 export function useInactivity({ timeoutMs, warningMs, enabled, onReset, now = Date.now }: Options) {
+  // L'horloge est lue via une référence : une nouvelle fonction à chaque rendu ne doit pas relancer l'effet
+  const nowRef = useRef(now);
+  nowRef.current = now;
   const lastActivity = useRef(now());
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
   const resetRef = useRef(onReset);
   resetRef.current = onReset;
 
   const touch = useCallback(() => {
-    lastActivity.current = now();
+    lastActivity.current = nowRef.current();
     setSecondsLeft(null);
-  }, [now]);
+  }, []);
 
   useEffect(() => {
     if (!enabled) {
       setSecondsLeft(null);
       return;
     }
-    lastActivity.current = now();
+    lastActivity.current = nowRef.current();
     const events = ['pointerdown', 'keydown'] as const;
     const onActivity = () => {
       // Pendant l'avertissement, seul le bouton « Je suis là » compte : un tap perdu ne prolonge pas la session
       if (document.querySelector('[data-inactivity-warning]')) return;
-      lastActivity.current = now();
+      lastActivity.current = nowRef.current();
     };
     events.forEach((name) => document.addEventListener(name, onActivity, true));
     const id = window.setInterval(() => {
-      const idle = now() - lastActivity.current;
+      const idle = nowRef.current() - lastActivity.current;
       if (idle >= timeoutMs + warningMs) {
         setSecondsLeft(null);
         resetRef.current();
@@ -53,7 +56,7 @@ export function useInactivity({ timeoutMs, warningMs, enabled, onReset, now = Da
       events.forEach((name) => document.removeEventListener(name, onActivity, true));
       window.clearInterval(id);
     };
-  }, [enabled, timeoutMs, warningMs, now]);
+  }, [enabled, timeoutMs, warningMs]);
 
   return { secondsLeft, stay: touch };
 }
